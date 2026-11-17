@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DC All In & Absolute Era: Completionist Ultra Reading Tracker (2025–2026)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Oswald:wght@600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Oswald', 'sans-serif'],
+          },
+          colors: {
+            dcBlue: '#0476F2',
+            dcDark: '#090D16',
+            dcCard: '#111827',
+            dcBorder: '#1F2937',
+            absRed: '#E11D48',
+            absGold: '#F59E0B',
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* Custom scrollbar and subtle comic-book halftone background */
+    body {
+      background-color: #070A12;
+      background-image: radial-gradient(rgba(4, 118, 242, 0.08) 1px, transparent 1px);
+      background-size: 20px 20px;
+      color: #F3F4F6;
+    }
+    .comic-cover-shadow {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.12);
+    }
+    /* Print styling for clean PDF export */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #111827 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-card {
+        break-inside: avoid;
+        background: #ffffff !important;
+        border: 1px solid #d1d5db !important;
+        color: #111827 !important;
+        margin-bottom: 16px !important;
+      }
+      .print-text-dark {
+        color: #111827 !important;
+      }
+      .print-bg-light {
+        background-color: #f3f4f6 !important;
+        border-color: #d1d5db !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen antialiased selection:bg-dcBlue selection:text-white">
+
+  <!-- Toast Notification Box (Replaces alert/confirm) -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden transform transition-all duration-300 translate-y-2 opacity-0">
+    <div class="bg-slate-800 border border-dcBlue/50 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+      <span id="toastIcon" class="text-dcBlue text-lg">✓</span>
+      <span id="toastMsg" class="text-sm font-medium">Progress saved!</span>
+    </div>
+  </div>
+
+  <!-- Hidden File Input for JSON Import -->
+  <input type="file" id="importFileInput" accept=".json" class="hidden" />
+
+  <!-- Sticky Header & Progress Dashboard -->
+  <header class="sticky top-0 z-40 bg-[#090D16]/95 backdrop-blur-md border-b border-slate-800 shadow-xl">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <!-- Title & Subtitle -->
+        <div>
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <span class="inline-flex items-center justify-center px-2.5 py-0.5 rounded-md text-xs font-extrabold tracking-wider uppercase bg-dcBlue text-white">
+              DC UNIVERSE ULTRA
+            </span>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold tracking-wider uppercase bg-rose-500/20 text-rose-400 border border-rose-500/30">
+              ALL IN &amp; ABSOLUTE ERA
+            </span>
+          </div>
+          <h1 class="font-display text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1.5 uppercase">
+            Completionist Reading Tracker (2025–2026)
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-400 mt-0.5">
+            Chronological Trade Paperback &amp; Single Issue Order • Pre-Read Lore Summaries Included
+          </p>
+        </div>
+
+        <!-- Action Buttons (Backup / Export / Print PDF) -->
+        <div class="flex flex-wrap items-center gap-2 no-print">
+          <button onclick="exportProgress()" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5" title="Download backup JSON">
+            <svg class="w-4 h-4 text-dcBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            Backup JSON
+          </button>
+          <button onclick="triggerImport()" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5" title="Restore from JSON">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            Restore
+          </button>
+          <button onclick="window.print()" class="px-3 py-2 rounded-lg bg-dcBlue hover:bg-blue-600 text-white text-xs font-semibold shadow-sm transition flex items-center gap-1.5" title="Save or Print as PDF">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            Print / PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- Overall Progress Bar -->
+      <div class="mt-4 bg-slate-900/90 border border-slate-800 rounded-xl p-3">
+        <div class="flex flex-wrap items-center justify-between text-xs sm:text-sm mb-1.5 gap-2">
+          <div class="flex items-center gap-3">
+            <span class="font-bold text-white">Overall Completion: <span id="progressPercent" class="text-dcBlue">0%</span></span>
+            <span class="text-slate-400">|</span>
+            <span class="text-slate-300"><strong id="completedVolumesCount" class="text-white">0</strong> of <strong id="totalVolumesCount" class="text-white">57</strong> Volumes</span>
+            <span class="hidden sm:inline text-slate-400">|</span>
+            <span class="hidden sm:inline text-slate-300"><strong id="completedIssuesCount" class="text-emerald-400">0</strong> of <strong id="totalIssuesCount" class="text-white">0</strong> Issues</span>
+          </div>
+          <span id="nextUpLabel" class="text-xs text-amber-400 font-medium truncate max-w-xs sm:max-w-md">
+            Next Up: #1 DC All In Saga (Prologue)
+          </span>
+        </div>
+        <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
+          <div id="progressBarFill" class="h-full bg-gradient-to-r from-dcBlue via-sky-400 to-emerald-400 transition-all duration-500 rounded-full" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+
+    <!-- Filter & Search Controls -->
+    <section class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 mb-6 space-y-4 no-print">
+      <!-- Search & Format Row -->
+      <div class="flex flex-col md:flex-row gap-3">
+        <div class="relative flex-1">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search by title, character (Batman, Absolute, JSA...), or issue number..."
+            class="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-dcBlue transition"
+          />
+        </div>
+
+        <!-- Format Filter Pills -->
+        <div class="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 overflow-x-auto">
+          <button data-format="all" class="format-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-dcBlue text-white whitespace-nowrap transition">
+            All Formats
+          </button>
+          <button data-format="TPB" class="format-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white whitespace-nowrap transition">
+            Trade Paperback (TPB)
+          </button>
+          <button data-format="Single Issues" class="format-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white whitespace-nowrap transition">
+            Single Issues (Ultra 30-Day)
+          </button>
+        </div>
+
+        <!-- Status Toggle -->
+        <div class="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800">
+          <button data-status="all" class="status-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-white whitespace-nowrap transition">
+            All
+          </button>
+          <button data-status="unread" class="status-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white whitespace-nowrap transition">
+            Unread
+          </button>
+          <button data-status="read" class="status-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white whitespace-nowrap transition">
+            Completed
+          </button>
+        </div>
+      </div>
+
+      <!-- Era / Phase Filter Pills -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1" id="eraPillsContainer">
+        <button data-era="all" class="era-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-white text-slate-950 whitespace-nowrap transition shadow-sm">
+          All Eras (57)
+        </button>
+        <button data-era="Prologue & Launch" class="era-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap transition">
+          1. Prologue &amp; Launch
+        </button>
+        <button data-era="Main Universe (Act I)" class="era-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap transition">
+          2. Main Universe (Act I)
+        </button>
+        <button data-era="Absolute Universe (Act I)" class="era-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap transition">
+          3. Absolute Universe (Act I)
+        </button>
+        <button data-era="Crossover: We Are Yesterday" class="era-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap transition">
+          4. We Are Yesterday &amp; Summer '25
+        </button>
+        <button data-era="Absolute Universe (Act II)" class="era-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap transition">
+          5. Absolute Universe (Act II)
+        </button>
+        <button data-era="Event: DC K.O." class="era-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap transition">
+          6. Road to &amp; Event: DC K.O.
+        </button>
+        <button data-era="DC Next Level / Late 2026" class="era-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap transition">
+          7. DC Next Level / Late 2026
+        </button>
+      </div>
+    </section>
+
+    <!-- Results Counter -->
+    <div class="flex items-center justify-between mb-4 px-1">
+      <p class="text-xs sm:text-sm text-slate-400">
+        Showing <strong id="visibleCount" class="text-white">57</strong> entries in chronological reading order
+      </p>
+      <button id="resetFiltersBtn" onclick="resetFilters()" class="hidden text-xs text-dcBlue hover:underline font-semibold no-print">
+        Reset Filters
+      </button>
+    </div>
+
+    <!-- Reading List Feed -->
+    <div id="readingListContainer" class="space-y-6">
+      <!-- Cards injected dynamically by JS -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-16 bg-slate-900/50 border border-slate-800 rounded-2xl">
+      <div class="text-4xl mb-3">🦇</div>
+      <h3 class="text-lg font-bold text-white">No matching trades or issues found</h3>
+      <p class="text-sm text-slate-400 mt-1">Try clearing your search query or switching your Era/Format filters.</p>
+      <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-dcBlue hover:bg-blue-600 text-white text-xs font-bold rounded-xl transition">
+        Show Full Chronological Order
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="max-w-6xl mx-auto px-4 sm:px-6 py-8 border-t border-slate-800/80 text-center text-xs text-slate-500">
+    <p>DC All In &amp; Absolute Era Completionist Reading Tracker • Built for DC Universe Infinite Ultra (2025–2026 Availability)</p>
+    <p class="mt-1">Tip: Your reading progress is saved automatically in your browser's local storage. Use <strong>Backup JSON</strong> anytime to export a portable file.</p>
+  </footer>
+
+  <script>
+    // =========================================================================
+    // COMPLETE CHRONOLOGICAL DATASET (57 VOLUMES / ARCS: JAN 2025 – LATE 2026)
+    // =========================================================================
+    const READING_DATA = [
+      // PHASE 1: PROLOGUE & LAUNCH (EARLY 2025)
+      {
+        id: "vol-01",
+        order: 1,
+        era: "Prologue & Launch",
+        format: "TPB",
+        title: "DC All In Saga (Prologue)",
+        subtitle: "The Dawn of Two Universes",
+        whatYouNeedToKnow: "Amanda Waller nearly stripped Earth’s heroes of their powers during Absolute Power, forcing the Justice League to disband temporarily. In the aftermath, the heroes establish an expanded, global Watchtower network to face a looming cosmic threat—while Darkseid makes a shocking sacrifice that births a brand-new, corrupted alternate universe.",
+        issues: ["Absolute Power #4", "DC All In Special #1", "Batman #153", "Wonder Woman #14", "Superman #19"],
+        coverTheme: { bg1: "#0476F2", bg2: "#090D16", accent: "#F59E0B", badge: "ALL IN", icon: "⚡" },
+        ultraSearch: "DC All In Special"
+      },
+      {
+        id: "vol-02",
+        order: 2,
+        era: "Prologue & Launch",
+        format: "TPB",
+        title: "Justice League Unlimited Vol. 1: Into the Inferno",
+        subtitle: "Every Hero on Earth Has a Card",
+        whatYouNeedToKnow: "Following Darkseid's apparent death in the All In Special, a massive power vacuum opens across the DC Universe. Every active hero on Earth is given a Justice League membership card and access to the orbiting Watchtower, led by a core rotating roster tackling global disasters and a mysterious terrorist organization called Inferno.",
+        issues: ["Justice League Unlimited #1", "Justice League Unlimited #2", "Justice League Unlimited #3", "Justice League Unlimited #4", "Justice League Unlimited #5"],
+        coverTheme: { bg1: "#1D4ED8", bg2: "#0F172A", accent: "#38BDF8", badge: "JLU", icon: "🌐" },
+        ultraSearch: "Justice League Unlimited"
+      },
+      {
+        id: "vol-03",
+        order: 3,
+        era: "Prologue & Launch",
+        format: "TPB",
+        title: "Absolute Batman Vol. 1: The Zoo",
+        subtitle: "No Mansion. No Money. No Butler.",
+        whatYouNeedToKnow: "Welcome to the Absolute Universe—a world shaped by Darkseid’s energy where heroes lack their traditional privileges. Here, Bruce Wayne isn't a billionaire; he's a working-class civil engineer in Gotham City without a fortune, a mansion, or a butler, taking on a brutal, militarized gang known as the Party Animals.",
+        issues: ["Absolute Batman #1", "Absolute Batman #2", "Absolute Batman #3", "Absolute Batman #4", "Absolute Batman #5", "Absolute Batman #6"],
+        coverTheme: { bg1: "#18181B", bg2: "#09090B", accent: "#E11D48", badge: "ABSOLUTE", icon: "🦇" },
+        ultraSearch: "Absolute Batman"
+      },
+      {
+        id: "vol-04",
+        order: 4,
+        era: "Prologue & Launch",
+        format: "TPB",
+        title: "Absolute Wonder Woman Vol. 1: The Last Amazon",
+        subtitle: "Raised in Hell by Circe",
+        whatYouNeedToKnow: "In the Absolute Universe, Diana wasn't raised in the paradise of Themyscira—she grew up in the depths of Hell, mentored by the witch Circe. Wielding dark magic, a massive buster sword, and riding a skeletal steed, she emerges onto Earth for the first time to defend humanity from monstrous ancient threats.",
+        issues: ["Absolute Wonder Woman #1", "Absolute Wonder Woman #2", "Absolute Wonder Woman #3", "Absolute Wonder Woman #4", "Absolute Wonder Woman #5", "Absolute Wonder Woman #6"],
+        coverTheme: { bg1: "#991B1B", bg2: "#1C1917", accent: "#FBBF24", badge: "ABSOLUTE", icon: "⚔️" },
+        ultraSearch: "Absolute Wonder Woman"
+      },
+      {
+        id: "vol-05",
+        order: 5,
+        era: "Prologue & Launch",
+        format: "TPB",
+        title: "Absolute Superman Vol. 1: Last Dust of Krypton",
+        subtitle: "A Working-Class Hero Without a Family",
+        whatYouNeedToKnow: "Stripped of his Smallville upbringing and his loving adoptive parents, this Kal-El arrived on Earth as a teenager who vividly remembers Krypton's destruction. Moving from town to town as a solitary wanderer, he defends exploited laborers against the ruthless Lazarus Corporation and its lethal Peacemaker enforcers.",
+        issues: ["Absolute Superman #1", "Absolute Superman #2", "Absolute Superman #3", "Absolute Superman #4", "Absolute Superman #5", "Absolute Superman #6"],
+        coverTheme: { bg1: "#B91C1C", bg2: "#0C4A6E", accent: "#FACC15", badge: "ABSOLUTE", icon: "🛡️" },
+        ultraSearch: "Absolute Superman"
+      },
+
+      // PHASE 2: MAIN UNIVERSE ACT I — GOTHAM, METROPOLIS & COSMIC (SPRING–SUMMER 2025)
+      {
+        id: "vol-06",
+        order: 6,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "Batman: Detective Comics Vol. 1: Mercy of the Father",
+        subtitle: "Tom Taylor & Mikel Janín's Gothic Mystery",
+        whatYouNeedToKnow: "Bruce Wayne is investing heavily in Gotham's renewal, only to confront a chilling secret tied directly to the night his parents were murdered. A mysterious figure connected to Joe Chill's past resurfaces, forcing Batman to question everything he thought he knew about his own origin.",
+        issues: ["Detective Comics #1090", "Detective Comics #1091", "Detective Comics #1092", "Detective Comics #1093", "Detective Comics #1094", "Detective Comics #1095", "Detective Comics #1096"],
+        coverTheme: { bg1: "#1E293B", bg2: "#020617", accent: "#60A5FA", badge: "DETECTIVE", icon: "🔍" },
+        ultraSearch: "Detective Comics 1090"
+      },
+      {
+        id: "vol-07",
+        order: 7,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "Batman and Robin Vol. 3: The Quiet Man",
+        subtitle: "Phillip Kennedy Johnson's Father-Son Detective Arc",
+        whatYouNeedToKnow: "Damian Wayne is volunteering at a Gotham hospital while questioning his future beyond being a vigilante. His soul-searching is interrupted when a terrifying, methodical serial killer known as Memento begins recreating murders linked to Bruce Wayne's earliest days of training.",
+        issues: ["Batman and Robin #14", "Batman and Robin #15", "Batman and Robin #16", "Batman and Robin #17", "Batman and Robin #18", "Batman and Robin #19"],
+        coverTheme: { bg1: "#065F46", bg2: "#0F172A", accent: "#34D399", badge: "DYNAMIC DUO", icon: "🦇" },
+        ultraSearch: "Batman and Robin 14"
+      },
+      {
+        id: "vol-08",
+        order: 8,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "Nightwing Vol. 2: Death Traps",
+        subtitle: "Dan Watters & Dexter Soy Take Over Blüdhaven",
+        whatYouNeedToKnow: "Dick Grayson faces a newly fractured Blüdhaven where rival street gangs have unexpectedly united under a mysterious benefactor. As Nightwing investigates the sudden ceasefire, he discovers a deadly architectural conspiracy woven into the city's very foundations.",
+        issues: ["Nightwing #119", "Nightwing #120", "Nightwing #121", "Nightwing #122", "Nightwing #123", "Nightwing #124"],
+        coverTheme: { bg1: "#0369A1", bg2: "#090D16", accent: "#38BDF8", badge: "BLÜDHAVEN", icon: "🦅" },
+        ultraSearch: "Nightwing 119"
+      },
+      {
+        id: "vol-09",
+        order: 9,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "Catwoman Vol. 1: Who Is Selina Kyle?",
+        subtitle: "Torunn Grønbekk's International Espionage Thriller",
+        whatYouNeedToKnow: "Seeking a clean break from Gotham's endless turf wars, Selina Kyle heads overseas—only to find a bounty placed on her head by ghosts from her pre-Catwoman past. Hunted by elite assassins, Selina has to outsmart an enemy who knows every alias she has ever used.",
+        issues: ["Catwoman #69", "Catwoman #70", "Catwoman #71", "Catwoman #72", "Catwoman #73", "Catwoman #74"],
+        coverTheme: { bg1: "#581C87", bg2: "#0F172A", accent: "#C084FC", badge: "HEIST", icon: "🐈‍⬛" },
+        ultraSearch: "Catwoman 69"
+      },
+      {
+        id: "vol-10",
+        order: 10,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "Batgirl Vol. 1: Mother",
+        subtitle: "Cassandra Cain & Lady Shiva Reunite",
+        whatYouNeedToKnow: "Cassandra Cain takes center stage in her first solo series in over a decade. When a deadly splinter sect of the League of Shadows targets Cassandra, she is forced into an uneasy, razor-sharp alliance with her lethal mother, Lady Shiva.",
+        issues: ["Batgirl #1", "Batgirl #2", "Batgirl #3", "Batgirl #4", "Batgirl #5", "Batgirl #6"],
+        coverTheme: { bg1: "#312E81", bg2: "#090D16", accent: "#FACC15", badge: "ALL IN", icon: "🥋" },
+        ultraSearch: "Batgirl 2024"
+      },
+      {
+        id: "vol-11",
+        order: 11,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "Superman Vol. 4: Rise of the Superwoman",
+        subtitle: "Lois Lane Gains Kryptonian Powers",
+        whatYouNeedToKnow: "After the chaos of Absolute Power scrambled metahuman abilities across the globe, Lois Lane mysteriously inherits Kryptonian superpowers! As Lois suits up as the new Superwoman alongside Clark, Doomsday breaks free from Hell with a terrifying new evolution.",
+        issues: ["Superman #19", "Superman #20", "Superman #21", "Superman #22", "Superman #23", "Superwoman Special #1"],
+        coverTheme: { bg1: "#1D4ED8", bg2: "#991B1B", accent: "#FDE047", badge: "METROPOLIS", icon: "🦸‍♀️" },
+        ultraSearch: "Superman 19"
+      },
+      {
+        id: "vol-12",
+        order: 12,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "Supergirl: Universe End",
+        subtitle: "Mariko Tamaki's Cosmic Backup Saga Collected",
+        whatYouNeedToKnow: "Collected from the Action Comics backup serials and the Supergirl Special, Kara Zor-El leaves Earth's orbit to investigate a distress signal from a dying sector of space, confronting survivor's guilt and cosmic piracy along the way.",
+        issues: ["Action Comics #1070 (Backup)", "Action Comics #1071–1081 (Backups)", "Supergirl Special #1"],
+        coverTheme: { bg1: "#0284C7", bg2: "#1E1B4B", accent: "#F43F5E", badge: "KRYPTON", icon: "✨" },
+        ultraSearch: "Supergirl Special"
+      },
+      {
+        id: "vol-13",
+        order: 13,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "Wonder Woman Vol. 3: Fury",
+        subtitle: "Diana Battles the Sovereign & Raises Trinity",
+        whatYouNeedToKnow: "With Steve Trevor tragically killed by the Sovereign in the aftermath of Absolute Power, a grieving Diana channels her righteous fury into dismantling the secret king of America—while balancing life as a new mother to infant Lizzie (Trinity).",
+        issues: ["Wonder Woman #14", "Wonder Woman #15", "Wonder Woman #16", "Wonder Woman #17", "Wonder Woman #18", "Wonder Woman #19"],
+        coverTheme: { bg1: "#B91C1C", bg2: "#1E293B", accent: "#F59E0B", badge: "THEMYSCIRA", icon: "🌟" },
+        ultraSearch: "Wonder Woman 14"
+      },
+      {
+        id: "vol-14",
+        order: 14,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "The Flash Vol. 3: As Above",
+        subtitle: "Wally West Split Across Dimensions",
+        whatYouNeedToKnow: "With Barry Allen temporarily depowered after Absolute Power, Wally West carries the mantle alone—until a Speed Force anomaly splits Wally into multiple versions of himself across Earth and the alien world of Skartaris.",
+        issues: ["The Flash #14", "The Flash #15", "The Flash #16", "The Flash #17", "The Flash #18", "The Flash #19"],
+        coverTheme: { bg1: "#DC2626", bg2: "#450A0A", accent: "#FACC15", badge: "SPEED FORCE", icon: "⚡" },
+        ultraSearch: "The Flash 14"
+      },
+      {
+        id: "vol-15",
+        order: 15,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "Green Lantern Vol. 4: Civil Corps",
+        subtitle: "The Emotional Spectrum Shatters",
+        whatYouNeedToKnow: "The United Planets' corrupt control over Oa triggers an all-out civil war among the Lanterns. When the Central Power Battery fractures, brand-new, unstable emotional spectrum colors—like Sorrow and Gray—erupt across the cosmos.",
+        issues: ["Green Lantern #16", "Green Lantern #17", "Green Lantern #18", "Green Lantern: Civil Corps Special #1", "Green Lantern: Fractured Spectrum Special #1"],
+        coverTheme: { bg1: "#15803D", bg2: "#052E16", accent: "#4ADE80", badge: "LANTERN CORPS", icon: "💍" },
+        ultraSearch: "Green Lantern Civil Corps"
+      },
+      {
+        id: "vol-16",
+        order: 16,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "Green Lantern Corps Vol. 1: New World Rising",
+        subtitle: "John Stewart, Kyle Rayner & Jessica Cruz",
+        whatYouNeedToKnow: "Spinning directly out of Civil Corps, John Stewart, Kyle Rayner, Jessica Cruz, and Guy Gardner reunite to rebuild the fractured Green Lantern Corps from the ground up while hunting down rogue wielders of the new emotional spectrum rings.",
+        issues: ["Green Lantern Corps #1", "Green Lantern Corps #2", "Green Lantern Corps #3", "Green Lantern Corps #4", "Green Lantern Corps #5"],
+        coverTheme: { bg1: "#166534", bg2: "#090D16", accent: "#86EFAC", badge: "ALL IN", icon: "🔋" },
+        ultraSearch: "Green Lantern Corps 2025"
+      },
+      {
+        id: "vol-17",
+        order: 17,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "The New Gods Vol. 1: The Falling Sky",
+        subtitle: "Ram V & Evan Cagle's Cosmic Mythology Epic",
+        whatYouNeedToKnow: "With Darkseid gone from the Main Universe, the fragile truce between New Genesis and Apokolips collapses. Mister Miracle (Scott Free) and Big Barda are pulled back into cosmic warfare when a mysterious child prophecy threatens the Fourth World.",
+        issues: ["The New Gods #1", "The New Gods #2", "The New Gods #3", "The New Gods #4", "The New Gods #5", "The New Gods #6"],
+        coverTheme: { bg1: "#B45309", bg2: "#1E1B4B", accent: "#FCD34D", badge: "FOURTH WORLD", icon: "🌌" },
+        ultraSearch: "The New Gods 2024"
+      },
+      {
+        id: "vol-18",
+        order: 18,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "JSA Vol. 1: Infinity Inc. vs. The Justice Society",
+        subtitle: "Jeff Lemire Relaunches DC's First Super-Team",
+        whatYouNeedToKnow: "While the senior members of the Justice Society are trapped off-world, the younger generation—led by Jade, Obsidian, and Yolanda Montez—must defend the JSA brownstone against a revived, corrupted version of the Injustice Society.",
+        issues: ["JSA #1", "JSA #2", "JSA #3", "JSA #4", "JSA #5", "JSA #6"],
+        coverTheme: { bg1: "#1E40AF", bg2: "#172554", accent: "#FBBF24", badge: "GOLDEN AGE", icon: "⏳" },
+        ultraSearch: "JSA 2024"
+      },
+      {
+        id: "vol-19",
+        order: 19,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "Titans Vol. 3: Out of the Shadows",
+        subtitle: "Donna Troy Leads a New Roster",
+        whatYouNeedToKnow: "With the Justice League back in operation from the Watchtower, the Titans step back from being Earth's sole protectors—and Donna Troy takes command as team leader just as Clock King orchestrates a heist on Titans Tower.",
+        issues: ["Titans #16", "Titans #17", "Titans #18", "Titans #19", "Titans #20", "Titans #21"],
+        coverTheme: { bg1: "#BE123C", bg2: "#1E1B4B", accent: "#FB7185", badge: "BLÜDHAVEN", icon: "🔥" },
+        ultraSearch: "Titans 16"
+      },
+      {
+        id: "vol-20",
+        order: 20,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "Justice League: The Atom Project",
+        subtitle: "Captain Atom, Ray Palmer & Ryan Choi",
+        whatYouNeedToKnow: "Absolute Power left dozens of heroes and villains with swapped or unstable powers. Ray Palmer (The Atom) and Ryan Choi team up with a volatile Captain Atom to build a facility capable of restoring stolen powers before global chaos erupts.",
+        issues: ["Justice League: The Atom Project #1", "Justice League: The Atom Project #2", "Justice League: The Atom Project #3", "Justice League: The Atom Project #4", "Justice League: The Atom Project #5", "Justice League: The Atom Project #6"],
+        coverTheme: { bg1: "#0F766E", bg2: "#090D16", accent: "#2DD4BF", badge: "JLU TIE-IN", icon: "⚛️" },
+        ultraSearch: "The Atom Project"
+      },
+      {
+        id: "vol-21",
+        order: 21,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "Black Lightning: The Standard",
+        subtitle: "Jefferson Pierce Leads the JLU Metahuman Outreach",
+        whatYouNeedToKnow: "Tasked by the Justice League with helping newly activated metahumans control their powers, Jefferson Pierce returns to Metropolis—only to discover his own daughters' abilities are mutating in dangerous ways.",
+        issues: ["Black Lightning #1", "Black Lightning #2", "Black Lightning #3", "Black Lightning #4", "Black Lightning #5"],
+        coverTheme: { bg1: "#1D4ED8", bg2: "#090D16", accent: "#FACC15", badge: "ALL IN", icon: "⚡" },
+        ultraSearch: "Black Lightning 2024"
+      },
+      {
+        id: "vol-22",
+        order: 22,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "Metamorpho: The Element Man",
+        subtitle: "Al Ewing's Silver Age-Inspired Cosmic Romp",
+        whatYouNeedToKnow: "Rex Mason joins the Justice League Unlimited roster but quickly finds himself flung across bizarre dimensions alongside Sapphire Stagg and Java, battling mad scientists and cosmic elements in classic Silver Age style.",
+        issues: ["Metamorpho: The Element Man #1", "Metamorpho: The Element Man #2", "Metamorpho: The Element Man #3", "Metamorpho: The Element Man #4", "Metamorpho: The Element Man #5", "Metamorpho: The Element Man #6"],
+        coverTheme: { bg1: "#C2410C", bg2: "#1E1B4B", accent: "#38BDF8", badge: "ALL IN", icon: "🧪" },
+        ultraSearch: "Metamorpho The Element Man"
+      },
+      {
+        id: "vol-23",
+        order: 23,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "The Question: All Along the Watchtower",
+        subtitle: "Renee Montoya Runs Security on the JLU Satellite",
+        whatYouNeedToKnow: "Former Gotham police commissioner Renee Montoya is appointed head of security aboard the orbiting Justice League Watchtower—and immediately uncovers a mole leaking League secrets from inside the station.",
+        issues: ["The Question: All Along the Watchtower #1", "The Question: All Along the Watchtower #2", "The Question: All Along the Watchtower #3", "The Question: All Along the Watchtower #4", "The Question: All Along the Watchtower #5", "The Question: All Along the Watchtower #6"],
+        coverTheme: { bg1: "#1E3A8A", bg2: "#090D16", accent: "#93C5FD", badge: "WATCHTOWER", icon: "🕵️‍♀️" },
+        ultraSearch: "All Along the Watchtower"
+      },
+      {
+        id: "vol-24",
+        order: 24,
+        era: "Main Universe (Act I)",
+        format: "TPB",
+        title: "Challengers of the Unknown",
+        subtitle: "Investigating the God-Shaped Hole in Reality",
+        whatYouNeedToKnow: "Working directly for Mr. Terrific and the Justice League, the original daredevil explorers—Prof, Rocky, Red, and Ace—venture into the dimensional rift left behind by Darkseid's death to map the anomalies threatening Earth.",
+        issues: ["Challengers of the Unknown #1", "Challengers of the Unknown #2", "Challengers of the Unknown #3", "Challengers of the Unknown #4", "Challengers of the Unknown #5"],
+        coverTheme: { bg1: "#4338CA", bg2: "#090D16", accent: "#A855F7", badge: "JLU TIE-IN", icon: "🧭" },
+        ultraSearch: "Challengers of the Unknown 2024"
+      },
+
+      // PHASE 3: ABSOLUTE UNIVERSE EXPANSION (SPRING–AUTUMN 2025)
+      {
+        id: "vol-25",
+        order: 25,
+        era: "Absolute Universe (Act I)",
+        format: "TPB",
+        title: "Absolute Flash Vol. 1: Of Two Worlds",
+        subtitle: "Wally West on the Run from Project Olympus",
+        whatYouNeedToKnow: "In the Absolute Universe, teenager Wally West gains unstable, terrifying speed powers after an accident at a secretive military facility—without Barry Allen or a Speed Force mentor to guide him. Hunted by a twisted version of the Rogues, Wally must learn to survive on the run.",
+        issues: ["Absolute Flash #1", "Absolute Flash #2", "Absolute Flash #3", "Absolute Flash #4", "Absolute Flash #5", "Absolute Flash #6"],
+        coverTheme: { bg1: "#DC2626", bg2: "#18181B", accent: "#FACC15", badge: "ABSOLUTE", icon: "⚡" },
+        ultraSearch: "Absolute Flash"
+      },
+      {
+        id: "vol-26",
+        order: 26,
+        era: "Absolute Universe (Act I)",
+        format: "TPB",
+        title: "Absolute Martian Manhunter Vol. 1: Martian Vision",
+        subtitle: "Deniz Camp & Javier Rodríguez's Psychedelic Noir",
+        whatYouNeedToKnow: "FBI Agent John Jones survives a bizarre bombing only to find his mind fused with an alien consciousness known as the Martian. Together, they perceive hidden psychic parasites feeding on human paranoia across Middleton.",
+        issues: ["Absolute Martian Manhunter #1", "Absolute Martian Manhunter #2", "Absolute Martian Manhunter #3", "Absolute Martian Manhunter #4", "Absolute Martian Manhunter #5", "Absolute Martian Manhunter #6"],
+        coverTheme: { bg1: "#059669", bg2: "#090D16", accent: "#F43F5E", badge: "ABSOLUTE", icon: "👁️" },
+        ultraSearch: "Absolute Martian Manhunter"
+      },
+      {
+        id: "vol-27",
+        order: 27,
+        era: "Absolute Universe (Act I)",
+        format: "TPB",
+        title: "Absolute Green Lantern Vol. 1: Without Fear",
+        subtitle: "Al Ewing's Cosmic Horror Reimagining",
+        whatYouNeedToKnow: "When a massive green monolith crashes into Evergreen, Nevada, Jo Mullein, Hal Jordan, and John Stewart are thrust into a chilling first-contact mystery where the 'Green Light' operates by terrifying, unfamiliar cosmic rules.",
+        issues: ["Absolute Green Lantern #1", "Absolute Green Lantern #2", "Absolute Green Lantern #3", "Absolute Green Lantern #4", "Absolute Green Lantern #5", "Absolute Green Lantern #6"],
+        coverTheme: { bg1: "#15803D", bg2: "#09090B", accent: "#A3E635", badge: "ABSOLUTE", icon: "🔦" },
+        ultraSearch: "Absolute Green Lantern"
+      },
+
+      // PHASE 4: CROSSOVER — WE ARE YESTERDAY & SUMMER 2025 WAVE
+      {
+        id: "vol-28",
+        order: 28,
+        era: "Crossover: We Are Yesterday",
+        format: "TPB",
+        title: "Justice League Unlimited / World's Finest: We Are Yesterday",
+        subtitle: "The First Major All In Crossover Event",
+        whatYouNeedToKnow: "Mark Waid unites Justice League Unlimited and Batman/Superman: World's Finest! Gorilla Grodd—secretly empowered by Darkseid's residual Omega energy—tears open the timestream, pulling classic villains from DC's past into the present to destroy the Watchtower.",
+        issues: ["Batman/Superman: World's Finest #38", "Justice League Unlimited #6", "Batman/Superman: World's Finest #39", "Justice League Unlimited #7", "World's Finest 2025 Annual #1", "Justice League Unlimited #8"],
+        coverTheme: { bg1: "#B45309", bg2: "#1E3A8A", accent: "#FDE047", badge: "CROSSOVER", icon: "🦍" },
+        ultraSearch: "We Are Yesterday"
+      },
+      {
+        id: "vol-29",
+        order: 29,
+        era: "Crossover: We Are Yesterday",
+        format: "TPB",
+        title: "Superman Vol. 5: Love and Mercy",
+        subtitle: "Amnesiac Lex Luthor & The Return of Mercy Graves",
+        whatYouNeedToKnow: "Following the battle against Doomsday, Lex Luthor remains completely amnesiac and genuinely wants to help Superman protect Metropolis—until a ruthless syndicate tied to Mercy Graves and Brainiac's lingering tech tests Lex's fragile redemption.",
+        issues: ["Superman #24", "Superman #25", "Superman #26", "Superman #27", "Superman: Lex Luthor Special #1"],
+        coverTheme: { bg1: "#1E40AF", bg2: "#090D16", accent: "#34D399", badge: "METROPOLIS", icon: "🧬" },
+        ultraSearch: "Superman 24"
+      },
+      {
+        id: "vol-30",
+        order: 30,
+        era: "Crossover: We Are Yesterday",
+        format: "TPB",
+        title: "Superman Unlimited Vol. 1: Kryptonite Kingdom",
+        subtitle: "Dan Slott & Rafael Albuquerque's Blockbuster Launch",
+        whatYouNeedToKnow: "A massive asteroid made entirely of Kryptonite crashes onto Earth, flooding the black market and transforming a small nation into a superpower overnight. Superman must adapt his tactics—and debut a bold new golden anti-Kryptonite form—to survive.",
+        issues: ["Superman Unlimited #1", "Superman Unlimited #2", "Superman Unlimited #3", "Superman Unlimited #4", "Superman Unlimited #5", "Superman Unlimited #6"],
+        coverTheme: { bg1: "#15803D", bg2: "#1E3A8A", accent: "#FACC15", badge: "SUMMER '25", icon: "☄️" },
+        ultraSearch: "Superman Unlimited"
+      },
+      {
+        id: "vol-31",
+        order: 31,
+        era: "Crossover: We Are Yesterday",
+        format: "TPB",
+        title: "Supergirl Vol. 1 (2025)",
+        subtitle: "Sophie Campbell Brings Kara Back to Midvale",
+        whatYouNeedToKnow: "Returning to Earth after her deep-space adventures, Kara Zor-El moves back to her hometown of Midvale for a fresh start—only to clash with a jealous, reimagined Lena Luthor and old Silver Age foes.",
+        issues: ["Supergirl #1", "Supergirl #2", "Supergirl #3", "Supergirl #4", "Supergirl #5", "Supergirl #6"],
+        coverTheme: { bg1: "#0284C7", bg2: "#991B1B", accent: "#FDE047", badge: "SUMMER '25", icon: "💫" },
+        ultraSearch: "Supergirl 2025"
+      },
+      {
+        id: "vol-32",
+        order: 32,
+        era: "Crossover: We Are Yesterday",
+        format: "TPB",
+        title: "Batman Vol. 1: Daylight",
+        subtitle: "Matt Fraction & Jorge Jiménez's Bold #1 Relaunch",
+        whatYouNeedToKnow: "Kicking off a brand-new Batman #1 era in late 2025, Matt Fraction and Jorge Jiménez give the Dark Knight a sleek blue-and-gray suit, a revamped Batmobile, and a thrilling mystery that forces Bruce Wayne to operate in broad daylight.",
+        issues: ["Batman (2025) #1", "Batman (2025) #2", "Batman (2025) #3", "Batman (2025) #4", "Batman (2025) #5", "Batman (2025) #6"],
+        coverTheme: { bg1: "#1D4ED8", bg2: "#1E293B", accent: "#FACC15", badge: "NEW #1 ERA", icon: "🦇" },
+        ultraSearch: "Batman 2025"
+      },
+      {
+        id: "vol-33",
+        order: 33,
+        era: "Crossover: We Are Yesterday",
+        format: "TPB",
+        title: "Batman: Dark Patterns",
+        subtitle: "Hayden Sherman & Dan Watters' Grounded Detective Anthology",
+        whatYouNeedToKnow: "Set during Batman's early years, this acclaimed 12-issue series strips away cosmic stakes to focus on four haunting, ground-level murder mysteries in Gotham City, showcasing Bruce Wayne's forensic brilliance.",
+        issues: ["Batman: Dark Patterns #1–6 (Vol. 1)", "Batman: Dark Patterns #7–12 (Vol. 2)"],
+        coverTheme: { bg1: "#334155", bg2: "#090D16", accent: "#F97316", badge: "NOIR", icon: "🔎" },
+        ultraSearch: "Batman Dark Patterns"
+      },
+      {
+        id: "vol-34",
+        order: 34,
+        era: "Crossover: We Are Yesterday",
+        format: "TPB",
+        title: "Green Lantern Vol. 5: Fractured Spectrum",
+        subtitle: "Hunting the Rogue Emotional Spectrum Rings",
+        whatYouNeedToKnow: "With the Central Battery still unstable, Hal Jordan and Carol Ferris (Star Sapphire) race across Sector 2814 to track down ordinary citizens suddenly corrupted by volatile new emotional rings.",
+        issues: ["Green Lantern #19", "Green Lantern #20", "Green Lantern #21", "Green Lantern #22", "Green Lantern #23", "Green Lantern #24"],
+        coverTheme: { bg1: "#16A34A", bg2: "#1E1B4B", accent: "#F472B6", badge: "COSMIC", icon: "🌈" },
+        ultraSearch: "Green Lantern 19"
+      },
+      {
+        id: "vol-35",
+        order: 35,
+        era: "Crossover: We Are Yesterday",
+        format: "TPB",
+        title: "Green Lantern / Green Lantern Corps: The Starbreaker Supremacy",
+        subtitle: "Cosmic Crossover Against an Ancient Sun-Eater",
+        whatYouNeedToKnow: "Hal Jordan, John Stewart, Kyle Rayner, and Guy Gardner unite both Lantern series to stop the return of Starbreaker—an ancient energy vampire feeding on the fractured emotional spectrum.",
+        issues: ["Green Lantern #25", "Green Lantern Corps #7", "Green Lantern #26", "Green Lantern Corps #8", "Green Lantern #27", "Green Lantern Corps #9"],
+        coverTheme: { bg1: "#15803D", bg2: "#7F1D1D", accent: "#FACC15", badge: "CROSSOVER", icon: "☀️" },
+        ultraSearch: "Starbreaker Supremacy"
+      },
+      {
+        id: "vol-36",
+        order: 36,
+        era: "Crossover: We Are Yesterday",
+        format: "TPB",
+        title: "The Flash Vol. 4: Bad Moon Rising",
+        subtitle: "Wally West & The Flash Family vs. Eclipso",
+        whatYouNeedToKnow: "Reunited after his dimensional split, Wally West must rally Impulse, Jay Garrick, and Jesse Quick when Eclipso unleashes a wave of cosmic darkness over Central City.",
+        issues: ["The Flash #20", "The Flash #21", "The Flash #22", "The Flash #23", "The Flash #24", "The Flash #25", "The Flash 2025 Annual #1"],
+        coverTheme: { bg1: "#B91C1C", bg2: "#1E1B4B", accent: "#A855F7", badge: "FLASH FAMILY", icon: "🌑" },
+        ultraSearch: "The Flash 20"
+      },
+      {
+        id: "vol-37",
+        order: 37,
+        era: "Crossover: We Are Yesterday",
+        format: "TPB",
+        title: "Wonder Woman Vol. 4: The Island of Mice and Men",
+        subtitle: "Diana, Cheetah & A Mythic Island Trap",
+        whatYouNeedToKnow: "Following the fall of the Sovereign, Diana embarks on a perilous voyage across uncharted seas alongside her oldest frenemy, Cheetah, confronting ancient Greek curses and protective instincts over baby Trinity.",
+        issues: ["Wonder Woman #23", "Wonder Woman #24", "Wonder Woman #25", "Wonder Woman #26", "Wonder Woman #27", "Wonder Woman #28"],
+        coverTheme: { bg1: "#991B1B", bg2: "#064E3B", accent: "#FBBF24", badge: "MYTHIC", icon: "🐆" },
+        ultraSearch: "Wonder Woman 23"
+      },
+      {
+        id: "vol-38",
+        order: 38,
+        era: "Crossover: We Are Yesterday",
+        format: "TPB",
+        title: "JSA Vol. 2: Ragnarok",
+        subtitle: "The Senior JSA Returns from Exile",
+        whatYouNeedToKnow: "Alan Scott, Jay Garrick, and Wildcat fight their way back from cosmic exile just in time to prevent a mythological apocalypse triggered by the Injustice Society.",
+        issues: ["JSA #7", "JSA #8", "JSA #9", "JSA #10", "JSA #11", "JSA #12"],
+        coverTheme: { bg1: "#1D4ED8", bg2: "#7C2D12", accent: "#FDE047", badge: "JSA", icon: "🛡️" },
+        ultraSearch: "JSA 7"
+      },
+      {
+        id: "vol-39",
+        order: 39,
+        era: "Crossover: We Are Yesterday",
+        format: "TPB",
+        title: "Titans Vol. 4: Terminated",
+        subtitle: "Deathstroke Returns to Destroy the Team",
+        whatYouNeedToKnow: "Slade Wilson (Deathstroke) resurfaces deadlier than ever, targeting the Titans' closest allies and testing Donna Troy's leadership to its absolute breaking point.",
+        issues: ["Titans #22", "Titans #23", "Titans #24", "Titans #25", "Titans #26", "Titans #27"],
+        coverTheme: { bg1: "#991B1B", bg2: "#0F172A", accent: "#F97316", badge: "TITANS", icon: "⚔️" },
+        ultraSearch: "Titans 22"
+      },
+      {
+        id: "vol-40",
+        order: 40,
+        era: "Crossover: We Are Yesterday",
+        format: "TPB",
+        title: "Secret Six (2025)",
+        subtitle: "Nicole Maines & Stephen Segovia's Black-Ops Team",
+        whatYouNeedToKnow: "Dreamer, Catman, Deadshot, Black Alice, and Jay Nakamura are blackmailed into forming a covert black-ops squad to hunt down Amanda Waller's hidden post-Absolute Power weapons caches.",
+        issues: ["Secret Six #1", "Secret Six #2", "Secret Six #3", "Secret Six #4", "Secret Six #5", "Secret Six #6"],
+        coverTheme: { bg1: "#4C1D95", bg2: "#090D16", accent: "#F43F5E", badge: "COVERT", icon: "🎯" },
+        ultraSearch: "Secret Six 2025"
+      },
+      {
+        id: "vol-41",
+        order: 41,
+        era: "Crossover: We Are Yesterday",
+        format: "TPB",
+        title: "Fire & Ice: When Hell Freezes Over",
+        subtitle: "Bea & Tora's Chaotic Smallville Road Trip",
+        whatYouNeedToKnow: "After their powers swapped during Absolute Power, best friends Fire and Ice try to lay low in Smallville—only to accidentally trigger a hilarious supervillain turf war.",
+        issues: ["Fire & Ice: When Hell Freezes Over #1", "Fire & Ice: When Hell Freezes Over #2", "Fire & Ice: When Hell Freezes Over #3", "Fire & Ice: When Hell Freezes Over #4", "Fire & Ice: When Hell Freezes Over #5", "Fire & Ice: When Hell Freezes Over #6"],
+        coverTheme: { bg1: "#059669", bg2: "#0284C7", accent: "#FDE047", badge: "COMEDY", icon: "❄️" },
+        ultraSearch: "Fire & Ice When Hell Freezes Over"
+      },
+      {
+        id: "vol-42",
+        order: 42,
+        era: "Crossover: We Are Yesterday",
+        format: "TPB",
+        title: "Justice League: Cheetah & Cheshire Rob the Watchtower",
+        subtitle: "Greg Rucka's High-Stakes Villain Heist",
+        whatYouNeedToKnow: "Cheetah and Cheshire assemble an unlikely crew of DC's slickest thieves to pull off the impossible: infiltrating the orbiting Justice League Watchtower to steal a cosmic artifact from the vault.",
+        issues: ["Cheetah & Cheshire Rob the Justice League #1", "Cheetah & Cheshire Rob the Justice League #2", "Cheetah & Cheshire Rob the Justice League #3", "Cheetah & Cheshire Rob the Justice League #4", "Cheetah & Cheshire Rob the Justice League #5", "Cheetah & Cheshire Rob the Justice League #6"],
+        coverTheme: { bg1: "#B45309", bg2: "#065F46", accent: "#FACC15", badge: "HEIST", icon: "💎" },
+        ultraSearch: "Cheetah Cheshire Rob"
+      },
+
+      // PHASE 5: ABSOLUTE UNIVERSE ACT II (LATE 2025 – EARLY 2026)
+      {
+        id: "vol-43",
+        order: 43,
+        era: "Absolute Universe (Act II)",
+        format: "TPB",
+        title: "Absolute Batman Vol. 2: Abomination",
+        subtitle: "Enter Absolute Mr. Freeze & Bane",
+        whatYouNeedToKnow: "Having survived the Party Animals, Bruce Wayne investigates the mysterious 'Ark M' black-site facilities funded by Joker—bringing him face-to-face with a monstrous, bio-engineered Absolute Mr. Freeze and a towering Absolute Bane.",
+        issues: ["Absolute Batman #7", "Absolute Batman #8", "Absolute Batman #9", "Absolute Batman #10", "Absolute Batman #11", "Absolute Batman #12", "Absolute Batman #13"],
+        coverTheme: { bg1: "#0F172A", bg2: "#1E3A8A", accent: "#38BDF8", badge: "ABSOLUTE", icon: "🧊" },
+        ultraSearch: "Absolute Batman 7"
+      },
+      {
+        id: "vol-44",
+        order: 44,
+        era: "Absolute Universe (Act II)",
+        format: "TPB",
+        title: "Absolute Wonder Woman Vol. 2",
+        subtitle: "Diana Confronts the Gods & Gateway City",
+        whatYouNeedToKnow: "Now known to the world, Diana establishes an embassy in Gateway City while uncovering why the Olympian gods abandoned humanity in this dark universe—and facing a twisted version of Doctor Poison.",
+        issues: ["Absolute Wonder Woman #7", "Absolute Wonder Woman #8", "Absolute Wonder Woman #9", "Absolute Wonder Woman #10", "Absolute Wonder Woman #11", "Absolute Wonder Woman #12", "Absolute Wonder Woman #13"],
+        coverTheme: { bg1: "#7F1D1D", bg2: "#090D16", accent: "#F59E0B", badge: "ABSOLUTE", icon: "🗡️" },
+        ultraSearch: "Absolute Wonder Woman 7"
+      },
+      {
+        id: "vol-45",
+        order: 45,
+        era: "Absolute Universe (Act II)",
+        format: "TPB",
+        title: "Absolute Superman Vol. 2",
+        subtitle: "Ra's al Ghul & The Lazarus Empire Strike Back",
+        whatYouNeedToKnow: "Kal-El discovers that the mastermind behind the Lazarus Corporation is none other than Ra's al Ghul, who seeks to capture the Last Son of Krypton and harness solar radiation to reshape Earth.",
+        issues: ["Absolute Superman #7", "Absolute Superman #8", "Absolute Superman #9", "Absolute Superman #10", "Absolute Superman #11", "Absolute Superman #12", "Absolute Superman #13"],
+        coverTheme: { bg1: "#991B1B", bg2: "#064E3B", accent: "#FACC15", badge: "ABSOLUTE", icon: "☀️" },
+        ultraSearch: "Absolute Superman 7"
+      },
+      {
+        id: "vol-46",
+        order: 46,
+        era: "Absolute Universe (Act II)",
+        format: "Single Issues",
+        title: "Absolute Evil #1 (One-Shot Special)",
+        subtitle: "The Villains of the Absolute Universe Unite",
+        whatYouNeedToKnow: "An essential one-shot revealing the secret cabal running the Absolute Universe from the shadows—bringing together Absolute Joker, Ra's al Ghul, Veronica Cale, and Hector Hammond as they react to the rise of the Absolute Trinity.",
+        issues: ["Absolute Evil #1"],
+        coverTheme: { bg1: "#881337", bg2: "#09090B", accent: "#F43F5E", badge: "ONE-SHOT", icon: "🃏" },
+        ultraSearch: "Absolute Evil"
+      },
+
+      // PHASE 6: ROAD TO DC K.O. & EVENT (LATE 2025 – MID 2026)
+      {
+        id: "vol-47",
+        order: 47,
+        era: "Event: DC K.O.",
+        format: "TPB",
+        title: "Justice League Unlimited Vol. 2: The Omega Act",
+        subtitle: "The Road to DC K.O. Begins",
+        whatYouNeedToKnow: "Following the temporal fallout of We Are Yesterday, Booster Gold goes missing in the 31st century—where Darkseid has conquered the Legion of Super-Heroes! The Watchtower scrambles to prepare Earth for Darkseid's impending return.",
+        issues: ["Justice League Unlimited #9", "Justice League: Dark Tomorrow Special #1", "Justice League Unlimited #10", "Justice League Unlimited #11", "Justice League: The Omega Act Special #1"],
+        coverTheme: { bg1: "#7F1D1D", bg2: "#1E1B4B", accent: "#EF4444", badge: "PRELUDE", icon: "Ω" },
+        ultraSearch: "The Omega Act"
+      },
+      {
+        id: "vol-48",
+        order: 48,
+        era: "Event: DC K.O.",
+        format: "TPB",
+        title: "DC K.O. (Main Event)",
+        subtitle: "Scott Snyder & Joshua Williamson's Cosmic Tournament",
+        whatYouNeedToKnow: "To stop Darkseid's Omega Legion from obliterating Earth, the heroes and villains of the DC Universe are forced into a high-stakes, cosmic elimination tournament—where the last champion standing absorbs enough Omega energy to challenge Darkseid himself.",
+        issues: ["DC K.O. #1", "DC K.O. #2", "DC K.O. #3", "DC K.O. #4", "DC K.O. #5"],
+        coverTheme: { bg1: "#DC2626", bg2: "#09090B", accent: "#FACC15", badge: "MEGA-EVENT", icon: "🥊" },
+        ultraSearch: "DC K.O."
+      },
+      {
+        id: "vol-49",
+        order: 49,
+        era: "Event: DC K.O.",
+        format: "TPB",
+        title: "DC K.O.: Justice League Unlimited",
+        subtitle: "Behind the Scenes of the Omega Tournament",
+        whatYouNeedToKnow: "While Earth's heavy hitters battle inside the tournament arena, Mr. Terrific, Martian Manhunter, and the Watchtower crew uncover a deadly sabotage plot unfolding behind the scenes.",
+        issues: ["Justice League Unlimited #12", "Justice League Unlimited #13", "Justice League Unlimited #14", "Justice League Unlimited #15", "Justice League Unlimited #16"],
+        coverTheme: { bg1: "#1D4ED8", bg2: "#7F1D1D", accent: "#38BDF8", badge: "EVENT TIE-IN", icon: "🛰️" },
+        ultraSearch: "Justice League Unlimited 12"
+      },
+      {
+        id: "vol-50",
+        order: 50,
+        era: "Event: DC K.O.",
+        format: "TPB",
+        title: "DC K.O.: Superman",
+        subtitle: "Clark Kent & Lex Luthor Enter the Ring",
+        whatYouNeedToKnow: "Superman enters the DC K.O. tournament determined to win without compromising his moral code—while a newly restored Lex Luthor uses every dirty trick in the book to seize the Omega crown for himself.",
+        issues: ["Superman #28", "Superman #29", "Superman #30", "Superman #31", "Superman #32", "Superman #33", "Superman #34", "Superman #35"],
+        coverTheme: { bg1: "#1E40AF", bg2: "#991B1B", accent: "#FDE047", badge: "EVENT TIE-IN", icon: "💥" },
+        ultraSearch: "Superman 28"
+      },
+      {
+        id: "vol-51",
+        order: 51,
+        era: "Event: DC K.O.",
+        format: "TPB",
+        title: "DC K.O.: All Fight",
+        subtitle: "Key Bracket Showdowns Across the DCU",
+        whatYouNeedToKnow: "Collects the explosive one-on-one bracket matchups from across the DC line—including Red Hood vs. Joker, Wonder Woman vs. Lobo, Flash vs. Lex Luthor, and Aquaman's brutal deep-sea clash.",
+        issues: ["Superman #33", "Titans #30", "The Flash #28", "Aquaman #12", "DC K.O.: Red Hood vs. The Joker #1", "DC K.O.: Wonder Woman vs. Lobo #1"],
+        coverTheme: { bg1: "#B91C1C", bg2: "#18181B", accent: "#FB923C", badge: "BRACKETS", icon: "🔥" },
+        ultraSearch: "DC K.O. All Fight"
+      },
+      {
+        id: "vol-52",
+        order: 52,
+        era: "Event: DC K.O.",
+        format: "TPB",
+        title: "DC K.O.: Knightfight & Battle Royale",
+        subtitle: "Batman's Gauntlet & Wildcard Specials",
+        whatYouNeedToKnow: "Eliminated early from the main arena, Batman is cast into a shadowy pocket dimension where he must fight corrupted alternate-future versions of his own Robins (Nightwing, Red Hood, Red Robin, and Damian) to escape.",
+        issues: ["DC K.O.: Knightfight #1", "DC K.O.: Knightfight #2", "DC K.O.: Knightfight #3", "DC K.O.: Knightfight #4", "DC K.O.: Galactic Slam #1", "DC K.O.: Kids Are All Fight #1", "DC K.O.: Boss Battle #1"],
+        coverTheme: { bg1: "#1E293B", bg2: "#090D16", accent: "#E11D48", badge: "KNIGHTFIGHT", icon: "🦇" },
+        ultraSearch: "DC K.O. Knightfight"
+      },
+
+      // PHASE 7: DC NEXT LEVEL & CURRENT ULTRA AVAILABILITY (MID–LATE 2026)
+      {
+        id: "vol-53",
+        order: 53,
+        era: "DC Next Level / Late 2026",
+        format: "Single Issues",
+        title: "Absolute Batman Vol. 3 & Single Issues (#14–20)",
+        subtitle: "Absolute Catwoman & The Joker's Endgame",
+        whatYouNeedToKnow: "Vol. 3 (issues #14–18) has just hit collected editions, while issues #19–20 are available via Ultra's 30-day single-issue window! Bruce Wayne reunites with childhood friend Selina Kyle—now a globe-trotting master thief—as the monstrous truth about Absolute Joker is finally revealed.",
+        issues: ["Absolute Batman #14", "Absolute Batman #15", "Absolute Batman #16", "Absolute Batman #17", "Absolute Batman #18", "Absolute Batman #19 (Single)", "Absolute Batman #20 (Single)"],
+        coverTheme: { bg1: "#18181B", bg2: "#881337", accent: "#F43F5E", badge: "ULTRA 30-DAY", icon: "🃏" },
+        ultraSearch: "Absolute Batman 14"
+      },
+      {
+        id: "vol-54",
+        order: 54,
+        era: "DC Next Level / Late 2026",
+        format: "Single Issues",
+        title: "Absolute Green Arrow #1–4 (Single Issues on Ultra)",
+        subtitle: "Pornsak Pichetshote & Rafael Albuquerque's Noir Thriller",
+        whatYouNeedToKnow: "With the collected trade releasing later in November 2026, read issues #1–4 individually on Ultra right now! In the Absolute Universe, Oliver Queen is an investigative journalist hunting corrupt elites—until a ruthless mercenary named Roy Harper enters his crosshairs.",
+        issues: ["Absolute Green Arrow #1", "Absolute Green Arrow #2", "Absolute Green Arrow #3", "Absolute Green Arrow #4"],
+        coverTheme: { bg1: "#065F46", bg2: "#09090B", accent: "#34D399", badge: "SINGLE ISSUES", icon: "🏹" },
+        ultraSearch: "Absolute Green Arrow"
+      },
+      {
+        id: "vol-55",
+        order: 55,
+        era: "DC Next Level / Late 2026",
+        format: "Single Issues",
+        title: "Batman: Bad Seeds (Single Issues on Ultra)",
+        subtitle: "The Post-DC K.O. Gotham Crossover",
+        whatYouNeedToKnow: "Poison Ivy's long-dormant genetic experiments erupt beneath Gotham City, mutating street-level crime and forcing Batman, Nightwing, and the GCPD into a city-wide quarantine. Read the single issues on Ultra ahead of the late-2026 TPB release.",
+        issues: ["Batman: Bad Seeds - Streets of Gotham #1", "Batman: Bad Seeds - Gotham Central #2", "Batman (2025) #11", "Detective Comics #1108", "Nightwing #136"],
+        coverTheme: { bg1: "#14532D", bg2: "#090D16", accent: "#4ADE80", badge: "SINGLE ISSUES", icon: "🌿" },
+        ultraSearch: "Batman Bad Seeds"
+      },
+      {
+        id: "vol-56",
+        order: 56,
+        era: "DC Next Level / Late 2026",
+        format: "Single Issues",
+        title: "Superman: Kingdom of Zod (Single Issues on Ultra)",
+        subtitle: "General Zod Seizes Power in the Aftermath of DC K.O.",
+        whatYouNeedToKnow: "Taking advantage of the cosmic upheaval left by DC K.O., General Zod establishes an aggressive New Krypton empire that threatens Earth's solar system. Available right now via single issues on DC Universe Ultra.",
+        issues: ["Superman #36", "Superman #37", "Superman #38", "Superman #39", "Superman #40"],
+        coverTheme: { bg1: "#7F1D1D", bg2: "#0F172A", accent: "#FACC15", badge: "SINGLE ISSUES", icon: "👑" },
+        ultraSearch: "Superman 36"
+      },
+      {
+        id: "vol-57",
+        order: 57,
+        era: "DC Next Level / Late 2026",
+        format: "Single Issues",
+        title: "DC Next Level Launches (Single Issues on Ultra)",
+        subtitle: "The New Wave of Solo & Team Series (Mid–Late 2026)",
+        whatYouNeedToKnow: "Following DC K.O., DC launched its 'Next Level' initiative—a sweeping wave of brand-new #1 series spotlighting fan-favorite antiheroes and classic teams! Because these launched in mid-to-late 2026, read them via Ultra's 30-day single-issue catalog.",
+        issues: [
+          "Deathstroke: The Terminator #1–5",
+          "Lobo #1–5",
+          "The Fury of Firestorm #1–5",
+          "Barbara Gordon: Breakout #1–6",
+          "Teen Titans #1–2",
+          "Legion of Super-Heroes #1–2",
+          "The Doom Patrol #1–2"
+        ],
+        coverTheme: { bg1: "#0476F2", bg2: "#4C1D95", accent: "#38BDF8", badge: "NEXT LEVEL", icon: "🚀" },
+        ultraSearch: "Barbara Gordon Breakout"
+      }
+    ];
+
+    // =========================================================================
+    // STATE MANAGEMENT & LOCAL STORAGE
+    // =========================================================================
+    const STORAGE_KEY = 'dc_ultra_tracker_2025_2026_v1';
+
+    let userState = {
+      completedVolumes: {}, // { "vol-01": true }
+      completedIssues: {}   // { "vol-01::0": true }
+    };
+
+    let activeFilters = {
+      era: 'all',
+      format: 'all',
+      status: 'all',
+      search: ''
+    };
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          userState.completedVolumes = parsed.completedVolumes || {};
+          userState.completedIssues = parsed.completedIssues || {};
+        }
+      } catch (e) {
+        console.error("Failed to load state from localStorage", e);
+      }
+    }
+
+    function saveState(showFeedback = true) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(userState));
+        updateDashboardMetrics();
+        if (showFeedback) {
+          showToast("Reading progress saved automatically");
+        }
+      } catch (e) {
+        console.error("Failed to save state", e);
+      }
+    }
+
+    // =========================================================================
+    // TOAST NOTIFICATION HELPER
+    // =========================================================================
+    let toastTimeout;
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.textContent = message;
+      toast.classList.remove('hidden');
+      // Trigger reflow
+      void toast.offsetWidth;
+      toast.classList.remove('translate-y-2', 'opacity-0');
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => toast.classList.add('hidden'), 300);
+      }, 2200);
+    }
+
+    // =========================================================================
+    // TOGGLE VOLUME & INDIVIDUAL ISSUE CHECKBOXES
+    // =========================================================================
+    function toggleVolume(volId) {
+      const entry = READING_DATA.find(item => item.id === volId);
+      if (!entry) return;
+
+      const isNowRead = !userState.completedVolumes[volId];
+      if (isNowRead) {
+        userState.completedVolumes[volId] = true;
+        entry.issues.forEach((_, idx) => {
+          userState.completedIssues[`${volId}::${idx}`] = true;
+        });
+      } else {
+        delete userState.completedVolumes[volId];
+        entry.issues.forEach((_, idx) => {
+          delete userState.completedIssues[`${volId}::${idx}`];
+        });
+      }
+
+      saveState(true);
+      renderList();
+    }
+
+    function toggleIssue(volId, issueIdx) {
+      const entry = READING_DATA.find(item => item.id === volId);
+      if (!entry) return;
+
+      const key = `${volId}::${issueIdx}`;
+      if (userState.completedIssues[key]) {
+        delete userState.completedIssues[key];
+      } else {
+        userState.completedIssues[key] = true;
+      }
+
+      // Auto-sync volume completion if all issues are checked
+      const allChecked = entry.issues.every((_, idx) => !!userState.completedIssues[`${volId}::${idx}`]);
+      if (allChecked) {
+        userState.completedVolumes[volId] = true;
+      } else {
+        delete userState.completedVolumes[volId];
+      }
+
+      saveState(true);
+      renderList();
+    }
+
+    // =========================================================================
+    // DASHBOARD METRICS & NEXT UP CALCULATION
+    // =========================================================================
+    function updateDashboardMetrics() {
+      const totalVolumes = READING_DATA.length;
+      const completedVolumes = READING_DATA.filter(v => !!userState.completedVolumes[v.id]).length;
+
+      let totalIssues = 0;
+      let completedIssues = 0;
+
+      READING_DATA.forEach(vol => {
+        totalIssues += vol.issues.length;
+        vol.issues.forEach((_, idx) => {
+          if (userState.completedIssues[`${vol.id}::${idx}`]) {
+            completedIssues++;
+          }
+        });
+      });
+
+      const pct = totalVolumes === 0 ? 0 : Math.round((completedVolumes / totalVolumes) * 100);
+
+      document.getElementById('progressPercent').textContent = `${pct}%`;
+      document.getElementById('completedVolumesCount').textContent = completedVolumes;
+      document.getElementById('totalVolumesCount').textContent = totalVolumes;
+      document.getElementById('completedIssuesCount').textContent = completedIssues;
+      document.getElementById('totalIssuesCount').textContent = totalIssues;
+      document.getElementById('progressBarFill').style.width = `${pct}%`;
+
+      // Find first unread volume in chronological order
+      const nextUnread = READING_DATA.find(v => !userState.completedVolumes[v.id]);
+      const nextUpEl = document.getElementById('nextUpLabel');
+      if (nextUnread) {
+        nextUpEl.textContent = `Next Up: #${nextUnread.order} ${nextUnread.title}`;
+      } else {
+        nextUpEl.textContent = `🎉 100% Complete! You've conquered the 2025–2026 DC Ultra Era!`;
+      }
+    }
+
+    // =========================================================================
+    // STYLED COMIC BOOK COVER GENERATOR (AUTHENTIC DC ALL IN / ABSOLUTE DRESS)
+    // =========================================================================
+    function generateCoverHTML(item) {
+      const { bg1, bg2, accent, badge, icon } = item.coverTheme;
+      const isAbsolute = item.title.toLowerCase().includes('absolute');
+      const issueCountLabel = item.issues.length === 1 ? '1 ISSUE' : `${item.issues.length} ISSUES`;
+
+      return `
+        <div class="w-32 sm:w-36 shrink-0 select-none">
+          <div class="relative aspect-[2/3] rounded-xl overflow-hidden comic-cover-shadow flex flex-col justify-between p-2.5 border border-white/15"
+               style="background: linear-gradient(155deg, ${bg1} 0%, ${bg2} 90%);">
+            
+            <!-- Subtle halftone overlay -->
+            <div class="absolute inset-0 opacity-15 pointer-events-none"
+                 style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 8px 8px;"></div>
+
+            <!-- Top DC Trade Dress Header -->
+            <div class="relative z-10 flex items-center justify-between gap-1 border-b border-white/20 pb-1.5">
+              <div class="flex items-center gap-1">
+                <span class="w-5 h-5 rounded-full bg-white text-slate-950 font-display font-extrabold text-[10px] flex items-center justify-center shadow">
+                  DC
+                </span>
+                <span class="text-[9px] font-extrabold tracking-wider uppercase px-1.5 py-0.5 rounded bg-black/50 text-white border border-white/15">
+                  ${badge}
+                </span>
+              </div>
+              <span class="text-[10px] font-bold text-white/90">#${item.order}</span>
+            </div>
+
+            <!-- Center Emblem & Stylized Title -->
+            <div class="relative z-10 my-auto text-center px-0.5">
+              <div class="text-3xl sm:text-4xl mb-1.5 drop-shadow-md">${icon}</div>
+              <div class="font-display font-bold text-xs sm:text-sm leading-tight uppercase tracking-tight text-white drop-shadow">
+                ${item.title.split(':')[0]}
+              </div>
+              ${item.title.includes(':') ? `
+                <div class="text-[9px] font-semibold uppercase tracking-wide mt-0.5 line-clamp-2" style="color: ${accent};">
+                  ${item.title.split(':')[1].trim()}
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- Bottom Issue Count Strip -->
+            <div class="relative z-10 pt-1.5 border-t border-white/20 flex items-center justify-between text-[9px] font-bold tracking-wider uppercase text-white/90">
+              <span>${isAbsolute ? 'DARKSEID EARTH' : 'PRIME EARTH'}</span>
+              <span class="px-1.5 py-0.5 rounded bg-black/50" style="color: ${accent};">${issueCountLabel}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // RENDER READING LIST CARDS (STRICT USER ORDER: SUMMARY BEFORE COVER/ISSUES)
+    // =========================================================================
+    function renderList() {
+      const container = document.getElementById('readingListContainer');
+      const emptyState = document.getElementById('emptyState');
+      const resetBtn = document.getElementById('resetFiltersBtn');
+
+      const query = activeFilters.search.trim().toLowerCase();
+      const hasActiveFilters = activeFilters.era !== 'all' || activeFilters.format !== 'all' || activeFilters.status !== 'all' || query !== '';
+      resetBtn.classList.toggle('hidden', !hasActiveFilters);
+
+      const filtered = READING_DATA.filter(item => {
+        if (activeFilters.era !== 'all' && item.era !== activeFilters.era) return false;
+        if (activeFilters.format !== 'all' && item.format !== activeFilters.format) return false;
+
+        const isRead = !!userState.completedVolumes[item.id];
+        if (activeFilters.status === 'read' && !isRead) return false;
+        if (activeFilters.status === 'unread' && isRead) return false;
+
+        if (query) {
+          const haystack = [
+            item.title,
+            item.subtitle,
+            item.era,
+            item.whatYouNeedToKnow,
+            ...item.issues
+          ].join(' ').toLowerCase();
+          if (!haystack.includes(query)) return false;
+        }
+
+        return true;
+      });
+
+      document.getElementById('visibleCount').textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      container.innerHTML = filtered.map(item => {
+        const isVolRead = !!userState.completedVolumes[item.id];
+        const checkedIssuesCount = item.issues.filter((_, idx) => !!userState.completedIssues[`${item.id}::${idx}`]).length;
+        const ultraUrl = `https://www.dcuniverseinfinite.com/search?q=${encodeURIComponent(item.ultraSearch)}`;
+
+        const formatBadgeClass = item.format === 'TPB'
+          ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+          : 'bg-amber-500/15 text-amber-300 border-amber-500/30';
+
+        const formatBadgeText = item.format === 'TPB'
+          ? '📚 TPB on Ultra'
+          : '⚡ Single Issues on Ultra (30-Day Window)';
+
+        return `
+          <article class="print-card rounded-2xl border transition-all duration-200 ${isVolRead ? 'bg-slate-900/50 border-emerald-500/40' : 'bg-[#111827] border-slate-800 hover:border-slate-700'} shadow-lg overflow-hidden">
+            
+            <!-- TOP BAR: Chronological Order #, Era Badge, Format Badge & Mark Volume Read -->
+            <div class="px-4 sm:px-6 py-3.5 bg-slate-950/60 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-lg text-xs font-extrabold bg-dcBlue text-white shadow-sm">
+                  #${item.order}
+                </span>
+                <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-slate-200 border border-slate-700">
+                  ${item.era}
+                </span>
+                <span class="px-2.5 py-1 rounded-lg text-xs font-semibold border ${formatBadgeClass}">
+                  ${formatBadgeText}
+                </span>
+              </div>
+
+              <!-- Main Volume Read Checkbox -->
+              <label class="inline-flex items-center gap-2.5 cursor-pointer select-none px-3 py-1.5 rounded-xl border transition ${isVolRead ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300' : 'bg-slate-900 hover:bg-slate-800 border-slate-700 text-slate-200'}">
+                <input
+                  type="checkbox"
+                  ${isVolRead ? 'checked' : ''}
+                  onchange="toggleVolume('${item.id}')"
+                  class="w-4 h-4 rounded accent-emerald-500 cursor-pointer"
+                />
+                <span class="text-xs font-bold uppercase tracking-wide">
+                  ${isVolRead ? 'Volume Completed ✓' : 'Mark Volume Read'}
+                </span>
+              </label>
+            </div>
+
+            <div class="p-4 sm:p-6 space-y-5">
+              <!-- STEP 1 (MANDATORY USER ORDER): "WHAT YOU NEED TO KNOW" SUMMARY BEFORE COVER & ISSUES -->
+              <div class="print-bg-light rounded-xl bg-slate-950/90 border-l-4 border-dcBlue p-4">
+                <div class="flex items-center gap-2 mb-1.5">
+                  <span class="text-xs font-extrabold uppercase tracking-wider text-dcBlue">
+                    📖 What You Need to Know Before Reading
+                  </span>
+                </div>
+                <p class="print-text-dark text-sm text-slate-300 leading-relaxed">
+                  ${item.whatYouNeedToKnow}
+                </p>
+              </div>
+
+              <!-- STEP 2: COVER ART + TITLE/NUMBER + INDIVIDUAL COLLECTED ISSUES -->
+              <div class="flex flex-col sm:flex-row gap-5 items-start">
+                <!-- Cover Art Thumbnail -->
+                ${generateCoverHTML(item)}
+
+                <!-- Title, Subtitle, Individual Issue Checkboxes & Ultra Search Link -->
+                <div class="flex-1 min-w-0 w-full">
+                  <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
+                    <div>
+                      <h2 class="print-text-dark font-display text-xl sm:text-2xl font-bold tracking-tight ${isVolRead ? 'text-slate-400 line-through decoration-emerald-500/60' : 'text-white'}">
+                        ${item.title}
+                      </h2>
+                      <p class="text-xs sm:text-sm font-medium text-slate-400 mt-0.5">
+                        ${item.subtitle}
+                      </p>
+                    </div>
+
+                    <!-- Quick Link to DC Universe Infinite Search -->
+                    <a
+                      href="${ultraUrl}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="no-print inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-dcBlue/15 hover:bg-dcBlue/25 text-sky-400 border border-dcBlue/30 text-xs font-semibold transition shrink-0 self-start"
+                    >
+                      <span>Open on DC Ultra</span>
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    </a>
+                  </div>
+
+                  <!-- Collected Issues Checklist -->
+                  <div class="mt-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Collected Issues (${checkedIssuesCount}/${item.issues.length} Read)
+                      </span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      ${item.issues.map((issueName, idx) => {
+                        const isIssueRead = !!userState.completedIssues[`${item.id}::${idx}`];
+                        return `
+                          <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg border text-xs cursor-pointer transition ${isIssueRead ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-300' : 'bg-slate-900/80 hover:bg-slate-800/90 border-slate-800 text-slate-200'}">
+                            <input
+                              type="checkbox"
+                              ${isIssueRead ? 'checked' : ''}
+                              onchange="toggleIssue('${item.id}', ${idx})"
+                              class="w-3.5 h-3.5 rounded accent-emerald-500 cursor-pointer shrink-0"
+                            />
+                            <span class="font-medium truncate ${isIssueRead ? 'line-through opacity-80' : ''}">
+                              ${issueName}
+                            </span>
+                          </label>
+                        `;
+                      }).join('')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </article>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // FILTER HANDLERS
+    // =========================================================================
+    function setupFilterListeners() {
+      // Search input
+      document.getElementById('searchInput').addEventListener('input', (e) => {
+        activeFilters.search = e.target.value;
+        renderList();
+      });
+
+      // Era buttons
+      document.querySelectorAll('.era-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeFilters.era = btn.dataset.era;
+          document.querySelectorAll('.era-btn').forEach(b => {
+            b.className = 'era-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap transition';
+          });
+          btn.className = 'era-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-white text-slate-950 whitespace-nowrap transition shadow-sm';
+          renderList();
+        });
+      });
+
+      // Format buttons
+      document.querySelectorAll('.format-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeFilters.format = btn.dataset.format;
+          document.querySelectorAll('.format-btn').forEach(b => {
+            b.className = 'format-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white whitespace-nowrap transition';
+          });
+          btn.className = 'format-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-dcBlue text-white whitespace-nowrap transition';
+          renderList();
+        });
+      });
+
+      // Status buttons
+      document.querySelectorAll('.status-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeFilters.status = btn.dataset.status;
+          document.querySelectorAll('.status-btn').forEach(b => {
+            b.className = 'status-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white whitespace-nowrap transition';
+          });
+          btn.className = 'status-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-white whitespace-nowrap transition';
+          renderList();
+        });
+      });
+    }
+
+    function resetFilters() {
+      activeFilters = { era: 'all', format: 'all', status: 'all', search: '' };
+      document.getElementById('searchInput').value = '';
+
+      document.querySelectorAll('.era-btn').forEach((b, i) => {
+        b.className = i === 0
+          ? 'era-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-white text-slate-950 whitespace-nowrap transition shadow-sm'
+          : 'era-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap transition';
+      });
+
+      document.querySelectorAll('.format-btn').forEach((b, i) => {
+        b.className = i === 0
+          ? 'format-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-dcBlue text-white whitespace-nowrap transition'
+          : 'format-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white whitespace-nowrap transition';
+      });
+
+      document.querySelectorAll('.status-btn').forEach((b, i) => {
+        b.className = i === 0
+          ? 'status-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-white whitespace-nowrap transition'
+          : 'status-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white whitespace-nowrap transition';
+      });
+
+      renderList();
+    }
+
+    // =========================================================================
+    // JSON BACKUP & RESTORE
+    // =========================================================================
+    function exportProgress() {
+      const dataStr = JSON.stringify(userState, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `dc-ultra-reading-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("Backup JSON downloaded!");
+    }
+
+    function triggerImport() {
+      document.getElementById('importFileInput').click();
+    }
+
+    document.getElementById('importFileInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const imported = JSON.parse(event.target.result);
+          if (imported && typeof imported === 'object') {
+            userState.completedVolumes = imported.completedVolumes || {};
+            userState.completedIssues = imported.completedIssues || {};
+            saveState(false);
+            renderList();
+            showToast("Progress restored from backup!");
+          }
+        } catch (err) {
+          showToast("Invalid JSON backup file.");
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    });
+
+    // =========================================================================
+    // INITIALIZE APP
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      setupFilterListeners();
+      updateDashboardMetrics();
+      renderList();
+    });
+  </script>
+</body>
+</html>
