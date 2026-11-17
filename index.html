@@ -24,6 +24,7 @@
             dcBorder: '#1F2937',
             absRed: '#E11D48',
             absGold: '#F59E0B',
+            marvelRed: '#EC1D24',
           }
         }
       }
@@ -64,6 +65,15 @@
         border-color: #d1d5db !important;
       }
     }
+    /* Marvel accent. These classes sit in the page so the Tailwind CDN keeps them. */
+    .bg-marvelRed { background-color: #EC1D24; }
+    .text-marvelRed { color: #EC1D24; }
+    .border-marvelRed { border-color: #EC1D24; }
+    body[data-track="marvel1990"] ::selection,
+    body[data-track="marvel2025"] ::selection {
+      background: #EC1D24;
+      color: #ffffff;
+    }
   </style>
 </head>
 <body class="min-h-screen antialiased selection:bg-dcBlue selection:text-white">
@@ -82,10 +92,25 @@
   <!-- Sticky Header & Progress Dashboard -->
   <header class="sticky top-0 z-40 bg-[#090D16]/95 backdrop-blur-md border-b border-slate-800 shadow-xl">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
+      <!-- Track switch. DC stays the default, and the last choice is remembered. -->
+      <div id="trackSwitch" class="flex flex-wrap items-center gap-1.5 mb-3 no-print" role="tablist" aria-label="Choose a reading track">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mr-0.5">Track</span>
+        <button type="button" role="tab" id="trackBtnDc" data-track="dc" aria-selected="true" class="track-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-dcBlue text-white whitespace-nowrap transition">
+          DC 2025 →
+        </button>
+        <button type="button" role="tab" id="trackBtnMarvel1990" data-track="marvel1990" aria-selected="false" class="track-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700 hover:text-white whitespace-nowrap transition">
+          Marvel 1990s →
+        </button>
+        <button type="button" role="tab" id="trackBtnMarvel2025" data-track="marvel2025" aria-selected="false" class="track-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700 hover:text-white whitespace-nowrap transition">
+          Marvel 2025 →
+        </button>
+      </div>
+      <p id="trackHint" class="hidden text-xs text-slate-400 mb-3 no-print"></p>
+
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <!-- Title & Subtitle -->
         <div>
-          <div class="flex items-center gap-2.5 flex-wrap">
+          <div id="brandLockup" class="flex items-center gap-2.5 flex-wrap">
             <span class="inline-flex items-center justify-center px-2.5 py-0.5 rounded-md text-xs font-extrabold tracking-wider uppercase bg-dcBlue text-white">
               DC UNIVERSE ULTRA
             </span>
@@ -93,10 +118,10 @@
               ALL IN &amp; ABSOLUTE ERA
             </span>
           </div>
-          <h1 class="font-display text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1.5 uppercase">
+          <h1 id="pageTitle" class="font-display text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1.5 uppercase">
             Completionist Reading Tracker (2025–2026)
           </h1>
-          <p class="text-xs sm:text-sm text-slate-400 mt-0.5">
+          <p id="pageSubtitle" class="text-xs sm:text-sm text-slate-400 mt-0.5">
             Chronological Trade Paperback &amp; Single Issue Order • Pre-Read Lore Summaries Included
           </p>
         </div>
@@ -124,7 +149,7 @@
           <div class="flex items-center gap-3">
             <span class="font-bold text-white">Overall Completion: <span id="progressPercent" class="text-dcBlue">0%</span></span>
             <span class="text-slate-400">|</span>
-            <span class="text-slate-300"><strong id="completedVolumesCount" class="text-white">0</strong> of <strong id="totalVolumesCount" class="text-white">57</strong> Volumes</span>
+            <span class="text-slate-300"><strong id="completedVolumesCount" class="text-white">0</strong> of <strong id="totalVolumesCount" class="text-white">57</strong> <span id="volumesWord">Volumes</span></span>
             <span class="hidden sm:inline text-slate-400">|</span>
             <span class="hidden sm:inline text-slate-300"><strong id="completedIssuesCount" class="text-emerald-400">0</strong> of <strong id="totalIssuesCount" class="text-white">0</strong> Issues</span>
           </div>
@@ -157,7 +182,7 @@
         </div>
 
         <!-- Format Filter Pills -->
-        <div class="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 overflow-x-auto">
+        <div id="formatFilter" class="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 overflow-x-auto">
           <button data-format="all" class="format-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-dcBlue text-white whitespace-nowrap transition">
             All Formats
           </button>
@@ -229,9 +254,9 @@
 
     <!-- Empty State -->
     <div id="emptyState" class="hidden text-center py-16 bg-slate-900/50 border border-slate-800 rounded-2xl">
-      <div class="text-4xl mb-3">🦇</div>
-      <h3 class="text-lg font-bold text-white">No matching trades or issues found</h3>
-      <p class="text-sm text-slate-400 mt-1">Try clearing your search query or switching your Era/Format filters.</p>
+      <div id="emptyEmoji" class="text-4xl mb-3">🦇</div>
+      <h3 id="emptyTitle" class="text-lg font-bold text-white">No matching trades or issues found</h3>
+      <p id="emptyCopy" class="text-sm text-slate-400 mt-1">Try clearing your search query or switching your Era/Format filters.</p>
       <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-dcBlue hover:bg-blue-600 text-white text-xs font-bold rounded-xl transition">
         Show Full Chronological Order
       </button>
@@ -241,8 +266,8 @@
 
   <!-- Footer -->
   <footer class="max-w-6xl mx-auto px-4 sm:px-6 py-8 border-t border-slate-800/80 text-center text-xs text-slate-500">
-    <p>DC All In &amp; Absolute Era Completionist Reading Tracker • Built for DC Universe Infinite Ultra (2025–2026 Availability)</p>
-    <p class="mt-1">Tip: Your reading progress is saved automatically in your browser's local storage. Use <strong>Backup JSON</strong> anytime to export a portable file.</p>
+    <p id="footerLine1">DC All In &amp; Absolute Era Completionist Reading Tracker • Built for DC Universe Infinite Ultra (2025–2026 Availability)</p>
+    <p id="footerLine2" class="mt-1">Tip: Your reading progress is saved automatically in your browser's local storage. Use <strong>Backup JSON</strong> anytime to export a portable file.</p>
   </footer>
 
   <script>
@@ -958,14 +983,684 @@
     ];
 
     // =========================================================================
+    // MARVEL 1990 — key arcs only, single issues, cover-dated 1990.
+    // Ids are stable. Do not reorder issues inside an entry: ticks use position.
+    // Chapters cover-dated 1991 are left for the next year.
+    // =========================================================================
+    const MARVEL_1990_DATA = [
+      {
+        id: "m90-01",
+        order: 1,
+        era: "Spider-Man",
+        format: "Single Issues",
+        title: "The Last of the Cosmic Power",
+        subtitle: "Amazing Spider-Man #328–329, Spectacular #160 and Web #60–61",
+        whatYouNeedToKnow: "Spider-Man is still carrying the cosmic powers he was handed during Acts of Vengeance. These five issues are the last of that strength. He is pulled into fights with Goliath, the Hulk, a Doom robot, Dragon Man and, in Amazing Spider-Man #329, the Tri-Sentinel.",
+        issues: ["Web of Spider-Man #60", "Amazing Spider-Man #328", "Spectacular Spider-Man #160", "Web of Spider-Man #61", "Amazing Spider-Man #329"],
+        coverTheme: { bg1: "#EC1D24", bg2: "#1A0508", accent: "#FDE047", badge: "1990", icon: "🕷️" },
+        ultraSearch: "Amazing Spider-Man 329"
+      },
+      {
+        id: "m90-02",
+        order: 2,
+        era: "Fantastic Four",
+        format: "Single Issues",
+        title: "Fantastic Four: Into the Time Stream",
+        subtitle: "Walt Simonson · Fantastic Four #337–341",
+        whatYouNeedToKnow: "Walt Simonson's Fantastic Four are thrown out of their own time. Kang the Conqueror is waiting in the time stream, and the team has to find a way home without leaving history in pieces. Read #337 to #341 as one trip.",
+        issues: ["Fantastic Four #337", "Fantastic Four #338", "Fantastic Four #339", "Fantastic Four #340", "Fantastic Four #341"],
+        coverTheme: { bg1: "#1D4ED8", bg2: "#0F172A", accent: "#7DD3FC", badge: "1990", icon: "4️⃣" },
+        ultraSearch: "Fantastic Four 337"
+      },
+      {
+        id: "m90-03",
+        order: 3,
+        era: "Avengers",
+        format: "Single Issues",
+        title: "Avengers: Spider-Man and Nebula",
+        subtitle: "Avengers #314–318 · on sale around spring 1990",
+        whatYouNeedToKnow: "The Avengers call on Spider-Man for a job off Earth. A galactic despot named Nebula is the threat, and the mission runs from Avengers #314 to #318. When Spider-Man gets home, Amazing Spider-Man #330 is the next chapter of his year.",
+        issues: ["Avengers #314", "Avengers #315", "Avengers #316", "Avengers #317", "Avengers #318"],
+        coverTheme: { bg1: "#1E3A8A", bg2: "#090D16", accent: "#F8FAFC", badge: "1990", icon: "🅰️" },
+        ultraSearch: "Avengers 316"
+      },
+      {
+        id: "m90-04",
+        order: 4,
+        era: "Spider-Man",
+        format: "Single Issues",
+        title: "Spectacular Spider-Man: Puma and the Hobgoblin",
+        subtitle: "Spectacular Spider-Man #161",
+        whatYouNeedToKnow: "Robbie Robertson's old legal trouble is coming to a head. On the street, Spider-Man is caught between the Puma and the Hobgoblin. You only need this one Spectacular issue for that clash.",
+        issues: ["Spectacular Spider-Man #161"],
+        coverTheme: { bg1: "#7F1D1D", bg2: "#111827", accent: "#FDBA74", badge: "1990", icon: "🕷️" },
+        ultraSearch: "Spectacular Spider-Man 161"
+      },
+      {
+        id: "m90-05",
+        order: 5,
+        era: "Spider-Man",
+        format: "Single Issues",
+        title: "Spectacular Spider-Man: Carrion",
+        subtitle: "Spectacular Spider-Man #162–163",
+        whatYouNeedToKnow: "Carrion is broken out of jail with the Hobgoblin's help. The pair go after Spider-Man, and the fight ends up beneath the streets. Read Spectacular Spider-Man #162 and #163 together.",
+        issues: ["Spectacular Spider-Man #162", "Spectacular Spider-Man #163"],
+        coverTheme: { bg1: "#3F6212", bg2: "#14532D", accent: "#BEF264", badge: "1990", icon: "🕷️" },
+        ultraSearch: "Spectacular Spider-Man 162"
+      },
+      {
+        id: "m90-06",
+        order: 6,
+        era: "Spider-Man",
+        format: "Single Issues",
+        title: "Amazing Spider-Man: With the Punisher",
+        subtitle: "Amazing Spider-Man #330–331",
+        whatYouNeedToKnow: "Spider-Man is back in New York after the trip into space with the Avengers. He crosses paths with the Punisher, and the two do not trust each other. A drugs operation pulls them onto the same case for these two issues.",
+        issues: ["Amazing Spider-Man #330", "Amazing Spider-Man #331"],
+        coverTheme: { bg1: "#18181B", bg2: "#7F1D1D", accent: "#FCA5A5", badge: "1990", icon: "🕷️" },
+        ultraSearch: "Amazing Spider-Man 330"
+      },
+      {
+        id: "m90-07",
+        order: 7,
+        era: "X-Men",
+        format: "Single Issues",
+        title: "Uncanny X-Men: Lady Mandarin",
+        subtitle: "Uncanny X-Men #257–258",
+        whatYouNeedToKnow: "The X-Men are still scattered after the Siege Perilous. Psylocke has been taken by the Hand and rebuilt as their assassin, Lady Mandarin. These two issues are about whether Betsy Braddock can remember the woman she was.",
+        issues: ["Uncanny X-Men #257", "Uncanny X-Men #258"],
+        coverTheme: { bg1: "#4C1D95", bg2: "#090D16", accent: "#F9A8D4", badge: "1990", icon: "⚔️" },
+        ultraSearch: "Uncanny X-Men 258"
+      },
+      {
+        id: "m90-08",
+        order: 8,
+        era: "X-Men",
+        format: "Single Issues",
+        title: "Uncanny X-Men: Searching for the Scattered",
+        subtitle: "Uncanny X-Men #259–260",
+        whatYouNeedToKnow: "Banshee and Forge start looking for the X-Men who vanished through the Siege Perilous. One of the missing, Colossus, is living in SoHo with no memory of who he is, under the name Peter Nicholas.",
+        issues: ["Uncanny X-Men #259", "Uncanny X-Men #260"],
+        coverTheme: { bg1: "#1E293B", bg2: "#4C1D95", accent: "#CBD5E1", badge: "1990", icon: "🔎" },
+        ultraSearch: "Uncanny X-Men 259"
+      },
+      {
+        id: "m90-09",
+        order: 9,
+        era: "X-Men",
+        format: "Single Issues",
+        title: "X-Factor #50: The Voices Jean Carries",
+        subtitle: "Early 1990 · one issue",
+        whatYouNeedToKnow: "Inferno is over, but Jean Grey still has other voices in her head: Madelyne Pryor, and an echo of the Phoenix. X-Factor #50 is Jean facing those voices before the team can get on with a quieter life.",
+        issues: ["X-Factor #50"],
+        coverTheme: { bg1: "#9F1239", bg2: "#1E1B4B", accent: "#FDE68A", badge: "1990", icon: "🔥" },
+        ultraSearch: "X-Factor 50"
+      },
+      {
+        id: "m90-10",
+        order: 10,
+        era: "X-Men",
+        format: "Single Issues",
+        title: "New Mutants: Cable and the M.L.F.",
+        subtitle: "New Mutants #86–89",
+        whatYouNeedToKnow: "The New Mutants are back from Asgard and short of friends. A hard soldier named Cable is moving in on the team, and a terrorist group called the Mutant Liberation Front has just made itself known. This is the start of that harsher era.",
+        issues: ["New Mutants #86", "New Mutants #87", "New Mutants #88", "New Mutants #89"],
+        coverTheme: { bg1: "#B45309", bg2: "#1C1917", accent: "#FDE68A", badge: "1990", icon: "🎖️" },
+        ultraSearch: "New Mutants 89"
+      },
+      {
+        id: "m90-11",
+        order: 11,
+        era: "Wolverine",
+        format: "Single Issues",
+        title: "Wolverine #24: Snow Blind",
+        subtitle: "Peter David and Gene Colan · May 1990",
+        whatYouNeedToKnow: "Logan is in Madripoor when a street child steals the wrong briefcase. It belongs to an assassin called the Snow Queen, and it is packed to kill. This is a one-off issue, Wolverine #24.",
+        issues: ["Wolverine (1988) #24"],
+        coverTheme: { bg1: "#0F172A", bg2: "#334155", accent: "#E2E8F0", badge: "1990", icon: "❄️" },
+        ultraSearch: "Wolverine 24"
+      },
+      {
+        id: "m90-12",
+        order: 12,
+        era: "Spider-Man",
+        format: "Single Issues",
+        title: "Amazing Spider-Man: Styx, Stone and Venom",
+        subtitle: "Amazing Spider-Man #332–333",
+        whatYouNeedToKnow: "An old tormentor of Mary Jane's sends the killers Styx and Stone after Spider-Man. Venom is in New York at the same time, and he wants Peter for himself. Read Amazing Spider-Man #332 and #333 as one clash.",
+        issues: ["Amazing Spider-Man #332", "Amazing Spider-Man #333"],
+        coverTheme: { bg1: "#14532D", bg2: "#052E16", accent: "#86EFAC", badge: "1990", icon: "🕷️" },
+        ultraSearch: "Amazing Spider-Man 332"
+      },
+      {
+        id: "m90-13",
+        order: 13,
+        era: "Spider-Man",
+        format: "Single Issues",
+        title: "Spectacular Spider-Man: Knight and Fogg",
+        subtitle: "Spectacular Spider-Man #164–167",
+        whatYouNeedToKnow: "Spider-Man steps in when the Beetle targets the Arranger. That puts him in the path of a British pair, Knight and Fogg, who will not drop the grudge. The chase runs through Spectacular Spider-Man #164 to #167.",
+        issues: ["Spectacular Spider-Man #164", "Spectacular Spider-Man #165", "Spectacular Spider-Man #166", "Spectacular Spider-Man #167"],
+        coverTheme: { bg1: "#1E3A8A", bg2: "#111827", accent: "#93C5FD", badge: "1990", icon: "🎩" },
+        ultraSearch: "Spectacular Spider-Man 164"
+      },
+      {
+        id: "m90-14",
+        order: 14,
+        era: "Avengers",
+        format: "Single Issues",
+        title: "Avengers: The Crossing Line",
+        subtitle: "Avengers #319–324 · not the 1995 story called The Crossing",
+        whatYouNeedToKnow: "This is The Crossing Line, not the later Avengers story called The Crossing. A British nuclear submarine is seized by a group called the Peace Corpse. Cap's team has to share the crisis with the People's Protectorate and Alpha Flight.",
+        issues: ["Avengers #319", "Avengers #320", "Avengers #321", "Avengers #322", "Avengers #323", "Avengers #324"],
+        coverTheme: { bg1: "#0C4A6E", bg2: "#082F49", accent: "#7DD3FC", badge: "1990", icon: "⚓" },
+        ultraSearch: "Avengers 319"
+      },
+      {
+        id: "m90-15",
+        order: 15,
+        era: "Avengers",
+        format: "Single Issues",
+        title: "Avengers #325: Party Games",
+        subtitle: "The backup strips in #319–324 lead into this issue",
+        whatYouNeedToKnow: "The team is catching its breath after The Crossing Line. Sersi is hosting a party at Avengers Mansion. Machinesmith, Minister Blood and Mother Night choose that night to make their move. It is a single issue.",
+        issues: ["Avengers #325"],
+        coverTheme: { bg1: "#6B21A8", bg2: "#1E1B4B", accent: "#F0ABFC", badge: "1990", icon: "🎉" },
+        ultraSearch: "Avengers 325"
+      },
+      {
+        id: "m90-16",
+        order: 16,
+        era: "Thor",
+        format: "Single Issues",
+        title: "Thor: The Black Galaxy Saga",
+        subtitle: "Thor #419–425 · Tom DeFalco and Ron Frenz",
+        whatYouNeedToKnow: "Thor and Eric Masterson are still sharing one life, and Eric is trying to raise his son. The High Evolutionary is at work in the Black Galaxy, and a new fighter called Stellaris is hunting anyone the Celestials have touched, Hercules included.",
+        issues: ["Thor #419", "Thor #420", "Thor #421", "Thor #422", "Thor #423", "Thor #424", "Thor #425"],
+        coverTheme: { bg1: "#1E3A8A", bg2: "#451A03", accent: "#FDE047", badge: "1990", icon: "⚡" },
+        ultraSearch: "Thor 419"
+      },
+      {
+        id: "m90-17",
+        order: 17,
+        era: "Captain America",
+        format: "Single Issues",
+        title: "Captain America: Streets of Poison",
+        subtitle: "Captain America #372–378 · the main story only",
+        whatYouNeedToKnow: "Mark Gruenwald and Ron Lim's summer Captain America story. A drug called Ice is ripping through the streets, and the question over Cap is whether the super-soldier serum counts as a drug too. Crossbones is in the mix. The Battlestar backups are optional.",
+        issues: ["Captain America #372", "Captain America #373", "Captain America #374", "Captain America #375", "Captain America #376", "Captain America #377", "Captain America #378"],
+        coverTheme: { bg1: "#1D4ED8", bg2: "#7F1D1D", accent: "#F8FAFC", badge: "1990", icon: "🛡️" },
+        ultraSearch: "Captain America 372"
+      },
+      {
+        id: "m90-18",
+        order: 18,
+        era: "Iron Man",
+        format: "Single Issues",
+        title: "Iron Man: Armor Wars II, the 1990 chapters",
+        subtitle: "Iron Man #258–263 · #264–266 are early 1991",
+        whatYouNeedToKnow: "This is the start of Armor Wars II, John Byrne's 1990 Iron Man story. Tony Stark's armour technology is under attack again. Only the cover-dated 1990 issues, #258 to #263, are listed. #264 to #266 are early 1991.",
+        issues: ["Iron Man #258", "Iron Man #259", "Iron Man #260", "Iron Man #261", "Iron Man #262", "Iron Man #263"],
+        coverTheme: { bg1: "#B45309", bg2: "#7F1D1D", accent: "#FDE68A", badge: "1990", icon: "🤖" },
+        ultraSearch: "Iron Man 258"
+      },
+      {
+        id: "m90-19",
+        order: 19,
+        era: "Spider-Man",
+        format: "Single Issues",
+        title: "Amazing Spider-Man: Return of the Sinister Six",
+        subtitle: "Amazing Spider-Man #334–339 · Doctor Octopus builds the team",
+        whatYouNeedToKnow: "Doctor Octopus is building a new Sinister Six, recruiting the Shocker, the Vulture and the rest one by one. Spider-Man has to meet that team before it can hit the city as a full unit. Amazing Spider-Man #334 to #339.",
+        issues: ["Amazing Spider-Man #334", "Amazing Spider-Man #335", "Amazing Spider-Man #336", "Amazing Spider-Man #337", "Amazing Spider-Man #338", "Amazing Spider-Man #339"],
+        coverTheme: { bg1: "#7F1D1D", bg2: "#431407", accent: "#FDBA74", badge: "1990", icon: "🐙" },
+        ultraSearch: "Amazing Spider-Man 334"
+      },
+      {
+        id: "m90-20",
+        order: 20,
+        era: "X-Men",
+        format: "Single Issues",
+        title: "Uncanny X-Men #266: Enter Gambit",
+        subtitle: "First appearance of Gambit · August 1990",
+        whatYouNeedToKnow: "Storm is a child again, and the Shadow King has her in a trap during an art heist. A charming mutant thief steps in to help her. This is Uncanny X-Men #266, and it is the first appearance of Gambit.",
+        issues: ["Uncanny X-Men #266"],
+        coverTheme: { bg1: "#3F0D12", bg2: "#111827", accent: "#F9A8D4", badge: "1990", icon: "🃏" },
+        ultraSearch: "Uncanny X-Men 266"
+      },
+      {
+        id: "m90-21",
+        order: 21,
+        era: "Fantastic Four",
+        format: "Single Issues",
+        title: "Fantastic Four: Nukebusters",
+        subtitle: "Fantastic Four #343–346 · #342 is a fill-in and is not listed",
+        whatYouNeedToKnow: "Walt Simonson aims the Fantastic Four at a nuclear menace that will not stay in the present. The job drags them back among the dinosaurs. Read #343 to #346 as one story.",
+        issues: ["Fantastic Four #343", "Fantastic Four #344", "Fantastic Four #345", "Fantastic Four #346"],
+        coverTheme: { bg1: "#14532D", bg2: "#052E16", accent: "#86EFAC", badge: "1990", icon: "🦖" },
+        ultraSearch: "Fantastic Four 343"
+      },
+      {
+        id: "m90-22",
+        order: 22,
+        era: "Spider-Man",
+        format: "Single Issues",
+        title: "Spider-Man: Torment",
+        subtitle: "Spider-Man (1990) #1–5 · Todd McFarlane",
+        whatYouNeedToKnow: "This is Todd McFarlane's new Spider-Man series, the one with no adjective in the title. The Lizard is loose and Calypso, who once stood with Kraven, is driving the hunt. Peter is married to Mary Jane, and Kraven is already dead.",
+        issues: ["Spider-Man (1990) #1", "Spider-Man (1990) #2", "Spider-Man (1990) #3", "Spider-Man (1990) #4", "Spider-Man (1990) #5"],
+        coverTheme: { bg1: "#14532D", bg2: "#022C22", accent: "#EC1D24", badge: "1990", icon: "🦎" },
+        ultraSearch: "Spider-Man 1990"
+      },
+      {
+        id: "m90-23",
+        order: 23,
+        era: "Spider-Man",
+        format: "Single Issues",
+        title: "Spectacular Spider-Man: The Outlaws",
+        subtitle: "Spectacular Spider-Man #168–170",
+        whatYouNeedToKnow: "The Avengers come back to help Spider-Man against the Space Phantom. After that, he builds a scratch team of former enemies, the Outlaws, for a job the usual heroes will not take. Spectacular Spider-Man #168 to #170.",
+        issues: ["Spectacular Spider-Man #168", "Spectacular Spider-Man #169", "Spectacular Spider-Man #170"],
+        coverTheme: { bg1: "#312E81", bg2: "#1E1B4B", accent: "#C4B5FD", badge: "1990", icon: "👻" },
+        ultraSearch: "Spectacular Spider-Man 168"
+      },
+      {
+        id: "m90-24",
+        order: 24,
+        era: "Wolverine",
+        format: "Single Issues",
+        title: "Wolverine #31–34: Hama and Silvestri",
+        subtitle: "Mostly self-contained · #34 is The Hunter in Darkness",
+        whatYouNeedToKnow: "Four 1990 issues from Larry Hama and Marc Silvestri's Wolverine. They are mostly self-contained. #34 sends Logan into the Canadian woods after a killer, with a legend called the Hunter in Darkness on the same trail.",
+        issues: ["Wolverine (1988) #31", "Wolverine (1988) #32", "Wolverine (1988) #33", "Wolverine (1988) #34"],
+        coverTheme: { bg1: "#3F3F46", bg2: "#18181B", accent: "#FDE047", badge: "1990", icon: "🐺" },
+        ultraSearch: "Wolverine 34"
+      },
+      {
+        id: "m90-25",
+        order: 25,
+        era: "Spider-Man",
+        format: "Single Issues",
+        title: "Spectacular Spider-Man #171: The Daily Bugle",
+        subtitle: "One issue",
+        whatYouNeedToKnow: "The Puma has ended up in control of the Daily Bugle, the paper Peter works for and the one J. Jonah Jameson still thinks of as his. This single Spectacular issue is about who that paper belongs to.",
+        issues: ["Spectacular Spider-Man #171"],
+        coverTheme: { bg1: "#1E293B", bg2: "#0F172A", accent: "#FDE047", badge: "1990", icon: "📰" },
+        ultraSearch: "Spectacular Spider-Man 171"
+      },
+      {
+        id: "m90-26",
+        order: 26,
+        era: "Spider-Man",
+        format: "Single Issues",
+        title: "Amazing Spider-Man: Powerless",
+        subtitle: "Amazing Spider-Man #340–343",
+        whatYouNeedToKnow: "A scientist called Dr Turner offers Spider-Man the chance to live with no powers at all. Old enemies are lining up while Peter decides what that offer would cost. Amazing Spider-Man #340 to #343, the Powerless story.",
+        issues: ["Amazing Spider-Man #340", "Amazing Spider-Man #341", "Amazing Spider-Man #342", "Amazing Spider-Man #343"],
+        coverTheme: { bg1: "#44403C", bg2: "#1C1917", accent: "#FDE68A", badge: "1990", icon: "🕷️" },
+        ultraSearch: "Amazing Spider-Man 340"
+      },
+      {
+        id: "m90-27",
+        order: 27,
+        era: "X-Men",
+        format: "Single Issues",
+        title: "Uncanny X-Men #269: Rogue and Ms. Marvel",
+        subtitle: "The Savage Land",
+        whatYouNeedToKnow: "The Siege Perilous spat Rogue and the Ms. Marvel personality she had absorbed out as two separate women, and only one of them can keep the life. Magneto is in the Savage Land as that choice comes due.",
+        issues: ["Uncanny X-Men #269"],
+        coverTheme: { bg1: "#14532D", bg2: "#052E16", accent: "#86EFAC", badge: "1990", icon: "💚" },
+        ultraSearch: "Uncanny X-Men 269"
+      },
+      {
+        id: "m90-28",
+        order: 28,
+        era: "X-Men",
+        format: "Single Issues",
+        title: "X-Tinction Agenda: the 1990 chapters",
+        subtitle: "Stops before the January 1991 conclusion",
+        whatYouNeedToKnow: "Genosha's magistrates, backed by the cyborg Cameron Hodge, come for the mutants on Earth. The scattered X-Men, X-Factor and the New Mutants are pulled into one fight. These are the 1990 chapters only. The last three issues are cover-dated January 1991.",
+        issues: ["Uncanny X-Men #270", "New Mutants #95", "X-Factor #60", "Uncanny X-Men #271", "New Mutants #96", "X-Factor #61"],
+        coverTheme: { bg1: "#7F1D1D", bg2: "#450A0A", accent: "#FECACA", badge: "1990", icon: "⛓️" },
+        ultraSearch: "X-Tinction Agenda"
+      },
+      {
+        id: "m90-29",
+        order: 29,
+        era: "Fantastic Four",
+        format: "Single Issues",
+        title: "Fantastic Four #347: A New Team Steps In",
+        subtitle: "Chapter one only · #348 and #349 are cover-dated 1991",
+        whatYouNeedToKnow: "The Fantastic Four have only just returned from their journey through time. A call goes out from Four Freedoms Plaza, and Spider-Man, Wolverine, the Hulk and Ghost Rider answer it. This is chapter one. #348 and #349 are cover-dated 1991.",
+        issues: ["Fantastic Four #347"],
+        coverTheme: { bg1: "#EC1D24", bg2: "#1E3A8A", accent: "#FDE047", badge: "1990", icon: "👻" },
+        ultraSearch: "Fantastic Four 347"
+      }
+    ];
+
+    // =========================================================================
+    // MARVEL 2025 ONWARDS — a checked starter list, not a full catalogue.
+    // Single issues only. Ids are stable. Do not reorder issues inside an entry.
+    // =========================================================================
+    const MARVEL_2025_DATA = [
+      {
+        id: "m25-01",
+        order: 1,
+        era: "One World Under Doom",
+        format: "Single Issues",
+        title: "One World Under Doom",
+        subtitle: "Ryan North and R.B. Silva · #1–9 · February to November 2025",
+        whatYouNeedToKnow: "Doctor Doom is already Earth's Sorcerer Supreme, after Blood Hunt. He seizes every broadcast and declares himself emperor of a new United Latveria. These nine issues are the spine of the 2025 event. You can follow his plan here even if you skip the tie-ins.",
+        issues: ["One World Under Doom #1", "One World Under Doom #2", "One World Under Doom #3", "One World Under Doom #4", "One World Under Doom #5", "One World Under Doom #6", "One World Under Doom #7", "One World Under Doom #8", "One World Under Doom #9"],
+        coverTheme: { bg1: "#14532D", bg2: "#052E16", accent: "#FDE047", badge: "DOOM", icon: "👑" },
+        ultraSearch: "One World Under Doom"
+      },
+      {
+        id: "m25-02",
+        order: 2,
+        era: "One World Under Doom",
+        format: "Single Issues",
+        title: "The 8 Deaths of Spider-Man",
+        subtitle: "Amazing Spider-Man (2022) #61–70 · #69–70 sit inside the Doom event",
+        whatYouNeedToKnow: "Joe Kelly's closing story on the previous Amazing Spider-Man. Doom has pushed a sorcerous duty onto Peter, and these ten issues are about what that does to him. #69 and #70 are the chapters that sit inside One World Under Doom. The 2025 relaunch comes after this.",
+        issues: ["Amazing Spider-Man (2022) #61", "Amazing Spider-Man (2022) #62", "Amazing Spider-Man (2022) #63", "Amazing Spider-Man (2022) #64", "Amazing Spider-Man (2022) #65", "Amazing Spider-Man (2022) #66", "Amazing Spider-Man (2022) #67", "Amazing Spider-Man (2022) #68", "Amazing Spider-Man (2022) #69", "Amazing Spider-Man (2022) #70"],
+        coverTheme: { bg1: "#7F1D1D", bg2: "#14532D", accent: "#FDE047", badge: "2025", icon: "🕷️" },
+        ultraSearch: "Amazing Spider-Man 61"
+      },
+      {
+        id: "m25-03",
+        order: 3,
+        era: "One World Under Doom",
+        format: "Single Issues",
+        title: "Fantastic Four: Our World Under Doom",
+        subtitle: "Fantastic Four (2022) #29–33 · Ryan North",
+        whatYouNeedToKnow: "Ryan North's Fantastic Four, inside the world Doom has just declared his. These five issues were collected as Our World Under Doom. The family is the same four. The change is the emperor now sitting over the planet.",
+        issues: ["Fantastic Four (2022) #29", "Fantastic Four (2022) #30", "Fantastic Four (2022) #31", "Fantastic Four (2022) #32", "Fantastic Four (2022) #33"],
+        coverTheme: { bg1: "#1D4ED8", bg2: "#14532D", accent: "#93C5FD", badge: "DOOM", icon: "4️⃣" },
+        ultraSearch: "Fantastic Four 29"
+      },
+      {
+        id: "m25-04",
+        order: 4,
+        era: "One World Under Doom",
+        format: "Single Issues",
+        title: "Avengers under Doom",
+        subtitle: "Avengers (2023) #25–28 · Jed MacKay",
+        whatYouNeedToKnow: "Jed MacKay's Avengers meet Doom's new order in these four issues. This is not a new first issue. It is the main Avengers book doing its part of One World Under Doom, so read it beside the core series rather than instead of it.",
+        issues: ["Avengers (2023) #25", "Avengers (2023) #26", "Avengers (2023) #27", "Avengers (2023) #28"],
+        coverTheme: { bg1: "#1E3A8A", bg2: "#14532D", accent: "#F8FAFC", badge: "DOOM", icon: "🅰️" },
+        ultraSearch: "Avengers 25"
+      },
+      {
+        id: "m25-05",
+        order: 5,
+        era: "One World Under Doom",
+        format: "Single Issues",
+        title: "Doom Academy",
+        subtitle: "Doom Academy #1–5 · February to June 2025",
+        whatYouNeedToKnow: "A five-issue school story set after Doom has named himself emperor. You need that fact, and not much else, to start. MacKenzie Cadenhead writes it, with Pasqual Ferry and João Lemos on the art.",
+        issues: ["Doom Academy #1", "Doom Academy #2", "Doom Academy #3", "Doom Academy #4", "Doom Academy #5"],
+        coverTheme: { bg1: "#14532D", bg2: "#1C1917", accent: "#FDE047", badge: "DOOM", icon: "🎓" },
+        ultraSearch: "Doom Academy"
+      },
+      {
+        id: "m25-06",
+        order: 6,
+        era: "One World Under Doom",
+        format: "Single Issues",
+        title: "Thunderbolts: Doomstrike",
+        subtitle: "Thunderbolts: Doomstrike #1–5",
+        whatYouNeedToKnow: "A five-issue Thunderbolts series pointed at Doom's regime, by Collin Kelly, Jackson Lanzing and Tommaso Bianchi. It is its own mini-series. Start it once you have read One World Under Doom #1, so the new world is already in place.",
+        issues: ["Thunderbolts: Doomstrike #1", "Thunderbolts: Doomstrike #2", "Thunderbolts: Doomstrike #3", "Thunderbolts: Doomstrike #4", "Thunderbolts: Doomstrike #5"],
+        coverTheme: { bg1: "#3F3F46", bg2: "#14532D", accent: "#FDE047", badge: "DOOM", icon: "⚡" },
+        ultraSearch: "Thunderbolts Doomstrike"
+      },
+      {
+        id: "m25-07",
+        order: 7,
+        era: "One World Under Doom",
+        format: "Single Issues",
+        title: "Doctor Strange of Asgard",
+        subtitle: "Doctor Strange of Asgard #1–5 · March to July 2025",
+        whatYouNeedToKnow: "Doom is wearing the Sorcerer Supreme's title, so this mini-series follows Stephen Strange to Asgard instead. Five issues by Derek Landy and Carlos Magno. It asks where Strange goes when the job on Earth is no longer his.",
+        issues: ["Doctor Strange of Asgard #1", "Doctor Strange of Asgard #2", "Doctor Strange of Asgard #3", "Doctor Strange of Asgard #4", "Doctor Strange of Asgard #5"],
+        coverTheme: { bg1: "#6B21A8", bg2: "#1E1B4B", accent: "#FDE047", badge: "DOOM", icon: "🔮" },
+        ultraSearch: "Doctor Strange of Asgard"
+      },
+      {
+        id: "m25-08",
+        order: 8,
+        era: "One World Under Doom",
+        format: "Single Issues",
+        title: "Doom's Division",
+        subtitle: "Doom's Division #1–5",
+        whatYouNeedToKnow: "Five issues about a team serving under Doom's banner while he rules. Yoon Ha Lee writes it, with Minkyu Jung on art. Read One World Under Doom #1 first, so you already know the world these people are working for.",
+        issues: ["Doom's Division #1", "Doom's Division #2", "Doom's Division #3", "Doom's Division #4", "Doom's Division #5"],
+        coverTheme: { bg1: "#14532D", bg2: "#052E16", accent: "#86EFAC", badge: "DOOM", icon: "🛡️" },
+        ultraSearch: "Doom's Division"
+      },
+      {
+        id: "m25-09",
+        order: 9,
+        era: "One World Under Doom",
+        format: "Single Issues",
+        title: "Iron Man: The Insurgent Iron Man",
+        subtitle: "Iron Man (2024) #6–10 · Spencer Ackerman",
+        whatYouNeedToKnow: "Spencer Ackerman's Iron Man during the Doom crisis, collected as The Insurgent Iron Man. Tony is pushing back against the new emperor. These are issues #6 to #10 of the 2024 series, published through 2025.",
+        issues: ["Iron Man (2024) #6", "Iron Man (2024) #7", "Iron Man (2024) #8", "Iron Man (2024) #9", "Iron Man (2024) #10"],
+        coverTheme: { bg1: "#B45309", bg2: "#7F1D1D", accent: "#FDE68A", badge: "DOOM", icon: "🤖" },
+        ultraSearch: "Iron Man 6"
+      },
+      {
+        id: "m25-10",
+        order: 10,
+        era: "One World Under Doom",
+        format: "Single Issues",
+        title: "Red Hulk (2025)",
+        subtitle: "Red Hulk #1–10 · collected as two trades, kept here as one run",
+        whatYouNeedToKnow: "Benjamin Percy and Geoff Shaw's 2025 Red Hulk series: ten issues, later split into two collections. General Ross is the man in the red form, and the book places him inside Doom's war. The issues are kept together as the whole run.",
+        issues: ["Red Hulk (2025) #1", "Red Hulk (2025) #2", "Red Hulk (2025) #3", "Red Hulk (2025) #4", "Red Hulk (2025) #5", "Red Hulk (2025) #6", "Red Hulk (2025) #7", "Red Hulk (2025) #8", "Red Hulk (2025) #9", "Red Hulk (2025) #10"],
+        coverTheme: { bg1: "#991B1B", bg2: "#450A0A", accent: "#FECACA", badge: "2025", icon: "💪" },
+        ultraSearch: "Red Hulk 2025"
+      },
+      {
+        id: "m25-11",
+        order: 11,
+        era: "One World Under Doom",
+        format: "Single Issues",
+        title: "Runaways (2025)",
+        subtitle: "Runaways (2025) #1–5 · Rainbow Rowell · June to October 2025",
+        whatYouNeedToKnow: "Rainbow Rowell brings the Runaways back for five issues during One World Under Doom. They are the young people who once learned their parents were super-villains. Here they have to live in the world Doom has taken.",
+        issues: ["Runaways (2025) #1", "Runaways (2025) #2", "Runaways (2025) #3", "Runaways (2025) #4", "Runaways (2025) #5"],
+        coverTheme: { bg1: "#6B21A8", bg2: "#1E1B4B", accent: "#F9A8D4", badge: "DOOM", icon: "🏃" },
+        ultraSearch: "Runaways 2025"
+      },
+      {
+        id: "m25-12",
+        order: 12,
+        era: "One World Under Doom",
+        format: "Single Issues",
+        title: "Superior Avengers",
+        subtitle: "Superior Avengers #1–6 · April to September 2025",
+        whatYouNeedToKnow: "A six-issue series by Steve Foxe and Luca Maresca about an Avengers team shaped by Doom's reign. It is a tie-in, separate from Jed MacKay's main Avengers book. Read the core Doom series first so you know whose side this team is on.",
+        issues: ["Superior Avengers #1", "Superior Avengers #2", "Superior Avengers #3", "Superior Avengers #4", "Superior Avengers #5", "Superior Avengers #6"],
+        coverTheme: { bg1: "#1E3A8A", bg2: "#14532D", accent: "#FDE047", badge: "DOOM", icon: "⭐" },
+        ultraSearch: "Superior Avengers"
+      },
+      {
+        id: "m25-13",
+        order: 13,
+        era: "Spider-Man",
+        format: "Single Issues",
+        title: "Amazing Spider-Man (2025): Get Back Up",
+        subtitle: "Amazing Spider-Man (2025) #1–5 · also legacy #965–969",
+        whatYouNeedToKnow: "The 2025 Amazing Spider-Man starts here. Peter is out of work. A rampaging Rhino is only the first problem, and Norman Osborn is around without the Green Goblin. Joe Kelly writes and Pepe Larraz draws. These five issues are the opening story.",
+        issues: ["Amazing Spider-Man (2025) #1", "Amazing Spider-Man (2025) #2", "Amazing Spider-Man (2025) #3", "Amazing Spider-Man (2025) #4", "Amazing Spider-Man (2025) #5"],
+        coverTheme: { bg1: "#EC1D24", bg2: "#1A0508", accent: "#FDE047", badge: "2025", icon: "🕷️" },
+        ultraSearch: "Amazing Spider-Man 2025"
+      },
+      {
+        id: "m25-14",
+        order: 14,
+        era: "X-Men",
+        format: "Single Issues",
+        title: "X-Men (2024) #19–22: The Heir",
+        subtitle: "Lead-in to Age of Revelation · earlier issues are not listed yet",
+        whatYouNeedToKnow: "Jed MacKay's From the Ashes X-Men are still the team in the north. Apocalypse has picked Doug Ramsey as his heir, and these issues are where that choice reaches them. #22 is the last chapter before Age of Revelation. #1 to #18 are not on this list yet.",
+        issues: ["X-Men (2024) #19", "X-Men (2024) #20", "X-Men (2024) #21", "X-Men (2024) #22"],
+        coverTheme: { bg1: "#1E3A8A", bg2: "#111827", accent: "#FDE047", badge: "X-MEN", icon: "✖️" },
+        ultraSearch: "X-Men 2024"
+      },
+      {
+        id: "m25-15",
+        order: 15,
+        era: "X-Men",
+        format: "Single Issues",
+        title: "X-Manhunt",
+        subtitle: "March 2025 · read these issues in this order",
+        whatYouNeedToKnow: "Krakoa has fallen and the X-Men are spread across several books. This March 2025 crossover is a hunt with Professor X at the centre of it. Read the issues in the order below. NYX #9 is also the week of One World Under Doom, so the two events touch.",
+        issues: ["Uncanny X-Men (2024) #11", "NYX (2024) #9", "Storm (2024) #6", "X-Men (2024) #13", "X-Factor (2024) #8", "X-Force (2024) #9", "Exceptional X-Men (2024) #7", "X-Manhunt Omega #1"],
+        coverTheme: { bg1: "#4C1D95", bg2: "#1E1B4B", accent: "#C4B5FD", badge: "2025", icon: "🔎" },
+        ultraSearch: "X-Manhunt"
+      },
+      {
+        id: "m25-16",
+        order: 16,
+        era: "X-Men",
+        format: "Single Issues",
+        title: "Giant-Size X-Men: the anniversary tour",
+        subtitle: "May to August 2025 · five one-shots",
+        whatYouNeedToKnow: "Marvel's 50th anniversary of Giant-Size X-Men. Kamala Khan is sent through famous days of mutant history, including the Dark Phoenix Saga, the Age of Apocalypse and House of M. Five one-shots, from May to August 2025.",
+        issues: ["Giant-Size X-Men (2025) #1", "Giant-Size Dark Phoenix Saga #1", "Giant-Size Age of Apocalypse #1", "Giant-Size House of M #1", "Giant-Size X-Men (2025) #2"],
+        coverTheme: { bg1: "#B45309", bg2: "#1E3A8A", accent: "#FDE047", badge: "2025", icon: "📖" },
+        ultraSearch: "Giant-Size X-Men 2025"
+      },
+      {
+        id: "m25-17",
+        order: 17,
+        era: "X-Men",
+        format: "Single Issues",
+        title: "X-Men: Hellfire Vigil",
+        subtitle: "One-shot · 2 July 2025",
+        whatYouNeedToKnow: "A one-shot marking a year, in the story, since Krakoa fell. The Hellfire Gala used to be the mutants' great night. This is the quieter marking of that loss, written by several of the From the Ashes teams together. It is a hinge into what comes next.",
+        issues: ["X-Men: Hellfire Vigil #1"],
+        coverTheme: { bg1: "#7F1D1D", bg2: "#1C1917", accent: "#FDE047", badge: "2025", icon: "🕯️" },
+        ultraSearch: "Hellfire Vigil"
+      },
+      {
+        id: "m25-18",
+        order: 18,
+        era: "Age of Revelation",
+        format: "Single Issues",
+        title: "Age of Revelation: the spine",
+        subtitle: "Prelude, overture, Amazing X-Men #1–3, then the finale",
+        whatYouNeedToKnow: "A dark-future event in the style of Age of Apocalypse. Ten years on, Doug Ramsey rules as Revelation, Apocalypse's heir, over a territory the X-Men do not trust. This list is the spine only. Other minis came out in parallel and are not all here yet.",
+        issues: ["X-Men: Age of Revelation #0", "X-Men: Age of Revelation Overture #1", "Amazing X-Men (2025) #1", "Amazing X-Men (2025) #2", "Amazing X-Men (2025) #3", "X-Men: Age of Revelation Finale #1"],
+        coverTheme: { bg1: "#450A0A", bg2: "#1C1917", accent: "#FECACA", badge: "2025", icon: "⏳" },
+        ultraSearch: "Age of Revelation"
+      },
+      {
+        id: "m25-19",
+        order: 19,
+        era: "Age of Revelation",
+        format: "Single Issues",
+        title: "World of Revelation",
+        subtitle: "Anthology one-shot · 8 October 2025",
+        whatYouNeedToKnow: "An anthology one-shot inside Age of Revelation, with short stories about Apocalypse and Professor X, Wiccan and Hulkling, and the Fantastic Four of that future. Ryan North, Al Ewing and Steve Foxe share it. It is extra, not required for Amazing X-Men.",
+        issues: ["World of Revelation #1"],
+        coverTheme: { bg1: "#1E1B4B", bg2: "#450A0A", accent: "#C4B5FD", badge: "2025", icon: "🌍" },
+        ultraSearch: "World of Revelation"
+      },
+      {
+        id: "m25-20",
+        order: 20,
+        era: "Shadows of Tomorrow",
+        format: "Single Issues",
+        title: "X-Men (2024) #23–25: After the future",
+        subtitle: "January 2026 epilogue · Jed MacKay",
+        whatYouNeedToKnow: "Jed MacKay's X-Men come back in January 2026, after Age of Revelation. One teammate is still lost in that future, and someone from that future is walking around in the present. The gene-terror group 3K is stirring again. These are issues #23 to #25.",
+        issues: ["X-Men (2024) #23", "X-Men (2024) #24", "X-Men (2024) #25"],
+        coverTheme: { bg1: "#1E3A8A", bg2: "#0F172A", accent: "#93C5FD", badge: "2026", icon: "✖️" },
+        ultraSearch: "X-Men 23"
+      },
+      {
+        id: "m25-21",
+        order: 21,
+        era: "Shadows of Tomorrow",
+        format: "Single Issues",
+        title: "Uncanny X-Men (2024) #22",
+        subtitle: "Gail Simone and David Marquez · 14 January 2026 · later issues not listed yet",
+        whatYouNeedToKnow: "Gail Simone and David Marquez's Uncanny X-Men resume in January 2026. A festive night is interrupted by Mutina, who has a favour to ask and will not take no for an answer. Later issues of this run are not on the list yet.",
+        issues: ["Uncanny X-Men (2024) #22"],
+        coverTheme: { bg1: "#9F1239", bg2: "#1C1917", accent: "#FECDD3", badge: "2026", icon: "🌹" },
+        ultraSearch: "Uncanny X-Men 22"
+      },
+      {
+        id: "m25-22",
+        order: 22,
+        era: "Shadows of Tomorrow",
+        format: "Single Issues",
+        title: "Wolverine (2024) #14",
+        subtitle: "Saladin Ahmed and Martín Cóccolo · the 2026 stretch starts here",
+        whatYouNeedToKnow: "Saladin Ahmed and Martín Cóccolo's Wolverine picks up after the dark future of Age of Revelation. Logan is back in his own book. Start here for the 2026 stretch. Later issues are still being published and are not listed until each one has been checked.",
+        issues: ["Wolverine (2024) #14"],
+        coverTheme: { bg1: "#3F3F46", bg2: "#18181B", accent: "#FDE047", badge: "2026", icon: "🐺" },
+        ultraSearch: "Wolverine 14"
+      },
+      {
+        id: "m25-23",
+        order: 23,
+        era: "Shadows of Tomorrow",
+        format: "Single Issues",
+        title: "Cyclops",
+        subtitle: "Cyclops #1–5 · Alex Paknadel and Rogê Antônio · from February 2026",
+        whatYouNeedToKnow: "A five-issue mini-series. Scott Summers is cut off from the X-Men, lost in the mountains, without the visor that holds his optic blasts in. Donald Pierce and the Reavers are hunting him. That is the situation the first issue drops you into.",
+        issues: ["Cyclops (2026) #1", "Cyclops (2026) #2", "Cyclops (2026) #3", "Cyclops (2026) #4", "Cyclops (2026) #5"],
+        coverTheme: { bg1: "#1D4ED8", bg2: "#0F172A", accent: "#FDE047", badge: "2026", icon: "👁️" },
+        ultraSearch: "Cyclops 2026"
+      }
+    ];
+
+    // =========================================================================
     // STATE MANAGEMENT & LOCAL STORAGE
     // =========================================================================
     const STORAGE_KEY = 'dc_ultra_tracker_2025_2026_v1';
-
-    let userState = {
-      completedVolumes: {}, // { "vol-01": true }
-      completedIssues: {}   // { "vol-01::0": true }
+    const MARVEL_1990_KEY = 'marvel_1990s_tracker_v1';
+    const MARVEL_2025_KEY = 'marvel_2025_tracker_v1';
+    const ACTIVE_TRACK_KEY = 'reading_tracker_active_track_v1';
+    const TRACK_KEYS = {
+      dc: STORAGE_KEY,
+      marvel1990: MARVEL_1990_KEY,
+      marvel2025: MARVEL_2025_KEY
     };
+
+    function emptyProgress() {
+      return { completedVolumes: {}, completedIssues: {} };
+    }
+
+    function readProgress(key) {
+      try {
+        const saved = localStorage.getItem(key);
+        if (!saved) return emptyProgress();
+        const parsed = JSON.parse(saved);
+        return {
+          completedVolumes: (parsed && parsed.completedVolumes) || {},
+          completedIssues: (parsed && parsed.completedIssues) || {}
+        };
+      } catch (e) {
+        console.error("Failed to load state from localStorage", e);
+        return emptyProgress();
+      }
+    }
+
+    const trackStates = {
+      dc: readProgress(STORAGE_KEY),
+      marvel1990: readProgress(MARVEL_1990_KEY),
+      marvel2025: readProgress(MARVEL_2025_KEY)
+    };
+
+    let activeTrackId = 'dc';
+    let userState = trackStates.dc;
 
     let activeFilters = {
       era: 'all',
@@ -974,22 +1669,22 @@
       search: ''
     };
 
+    function activeData() {
+      if (activeTrackId === 'marvel1990') return MARVEL_1990_DATA;
+      if (activeTrackId === 'marvel2025') return MARVEL_2025_DATA;
+      return READING_DATA;
+    }
+
     function loadState() {
-      try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          userState.completedVolumes = parsed.completedVolumes || {};
-          userState.completedIssues = parsed.completedIssues || {};
-        }
-      } catch (e) {
-        console.error("Failed to load state from localStorage", e);
-      }
+      trackStates.dc = readProgress(STORAGE_KEY);
+      trackStates.marvel1990 = readProgress(MARVEL_1990_KEY);
+      trackStates.marvel2025 = readProgress(MARVEL_2025_KEY);
+      userState = trackStates[activeTrackId] || trackStates.dc;
     }
 
     function saveState(showFeedback = true) {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(userState));
+        localStorage.setItem(TRACK_KEYS[activeTrackId], JSON.stringify(userState));
         updateDashboardMetrics();
         if (showFeedback) {
           showToast("Reading progress saved automatically");
@@ -997,6 +1692,10 @@
       } catch (e) {
         console.error("Failed to save state", e);
       }
+    }
+
+    function writeTrack(trackId) {
+      localStorage.setItem(TRACK_KEYS[trackId], JSON.stringify(trackStates[trackId]));
     }
 
     // =========================================================================
@@ -1023,7 +1722,7 @@
     // TOGGLE VOLUME & INDIVIDUAL ISSUE CHECKBOXES
     // =========================================================================
     function toggleVolume(volId) {
-      const entry = READING_DATA.find(item => item.id === volId);
+      const entry = activeData().find(item => item.id === volId);
       if (!entry) return;
 
       const isNowRead = !userState.completedVolumes[volId];
@@ -1044,7 +1743,7 @@
     }
 
     function toggleIssue(volId, issueIdx) {
-      const entry = READING_DATA.find(item => item.id === volId);
+      const entry = activeData().find(item => item.id === volId);
       if (!entry) return;
 
       const key = `${volId}::${issueIdx}`;
@@ -1070,13 +1769,14 @@
     // DASHBOARD METRICS & NEXT UP CALCULATION
     // =========================================================================
     function updateDashboardMetrics() {
-      const totalVolumes = READING_DATA.length;
-      const completedVolumes = READING_DATA.filter(v => !!userState.completedVolumes[v.id]).length;
+      const data = activeData();
+      const totalVolumes = data.length;
+      const completedVolumes = data.filter(v => !!userState.completedVolumes[v.id]).length;
 
       let totalIssues = 0;
       let completedIssues = 0;
 
-      READING_DATA.forEach(vol => {
+      data.forEach(vol => {
         totalIssues += vol.issues.length;
         vol.issues.forEach((_, idx) => {
           if (userState.completedIssues[`${vol.id}::${idx}`]) {
@@ -1095,19 +1795,63 @@
       document.getElementById('progressBarFill').style.width = `${pct}%`;
 
       // Find first unread volume in chronological order
-      const nextUnread = READING_DATA.find(v => !userState.completedVolumes[v.id]);
+      const nextUnread = data.find(v => !userState.completedVolumes[v.id]);
       const nextUpEl = document.getElementById('nextUpLabel');
       if (nextUnread) {
         nextUpEl.textContent = `Next Up: #${nextUnread.order} ${nextUnread.title}`;
-      } else {
+      } else if (activeTrackId === 'dc') {
         nextUpEl.textContent = `🎉 100% Complete! You've conquered the 2025–2026 DC Ultra Era!`;
+      } else {
+        nextUpEl.textContent = `100% complete. Every story on this list is ticked.`;
       }
     }
 
     // =========================================================================
     // STYLED COMIC BOOK COVER GENERATOR (AUTHENTIC DC ALL IN / ABSOLUTE DRESS)
     // =========================================================================
+    function generateMarvelCoverHTML(item) {
+      const { bg1, bg2, accent, badge, icon } = item.coverTheme;
+      const issueCountLabel = item.issues.length === 1 ? '1 ISSUE' : `${item.issues.length} ISSUES`;
+
+      return `
+        <div class="w-32 sm:w-36 shrink-0 select-none">
+          <div class="relative aspect-[2/3] rounded-xl overflow-hidden comic-cover-shadow flex flex-col justify-between p-2.5 border border-white/15"
+               style="background: linear-gradient(155deg, ${bg1} 0%, ${bg2} 90%);">
+            <div class="absolute inset-0 opacity-15 pointer-events-none"
+                 style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 8px 8px;"></div>
+            <div class="relative z-10 flex items-center justify-between gap-1 border-b border-white/20 pb-1.5">
+              <div class="flex items-center gap-1">
+                <span class="w-5 h-5 rounded-full font-display font-extrabold text-[10px] flex items-center justify-center shadow" style="background:#EC1D24;color:#fff;">
+                  M
+                </span>
+                <span class="text-[9px] font-extrabold tracking-wider uppercase px-1.5 py-0.5 rounded bg-black/50 text-white border border-white/15">
+                  ${badge}
+                </span>
+              </div>
+              <span class="text-[10px] font-bold text-white/90">#${item.order}</span>
+            </div>
+            <div class="relative z-10 my-auto text-center px-0.5">
+              <div class="text-3xl sm:text-4xl mb-1.5 drop-shadow-md">${icon}</div>
+              <div class="font-display font-bold text-xs sm:text-sm leading-tight uppercase tracking-tight text-white drop-shadow">
+                ${item.title.split(':')[0]}
+              </div>
+              ${item.title.includes(':') ? `
+                <div class="text-[9px] font-semibold uppercase tracking-wide mt-0.5 line-clamp-2" style="color: ${accent};">
+                  ${item.title.split(':')[1].trim()}
+                </div>
+              ` : ''}
+            </div>
+            <div class="relative z-10 pt-1.5 border-t border-white/20 flex items-center justify-between text-[9px] font-bold tracking-wider uppercase text-white/90">
+              <span class="truncate pr-1">${item.era}</span>
+              <span class="px-1.5 py-0.5 rounded bg-black/50 shrink-0" style="color: ${accent};">${issueCountLabel}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     function generateCoverHTML(item) {
+      if (activeTrackId !== 'dc') return generateMarvelCoverHTML(item);
       const { bg1, bg2, accent, badge, icon } = item.coverTheme;
       const isAbsolute = item.title.toLowerCase().includes('absolute');
       const issueCountLabel = item.issues.length === 1 ? '1 ISSUE' : `${item.issues.length} ISSUES`;
@@ -1169,7 +1913,7 @@
       const hasActiveFilters = activeFilters.era !== 'all' || activeFilters.format !== 'all' || activeFilters.status !== 'all' || query !== '';
       resetBtn.classList.toggle('hidden', !hasActiveFilters);
 
-      const filtered = READING_DATA.filter(item => {
+      const filtered = activeData().filter(item => {
         if (activeFilters.era !== 'all' && item.era !== activeFilters.era) return false;
         if (activeFilters.format !== 'all' && item.format !== activeFilters.format) return false;
 
@@ -1204,15 +1948,40 @@
       container.innerHTML = filtered.map(item => {
         const isVolRead = !!userState.completedVolumes[item.id];
         const checkedIssuesCount = item.issues.filter((_, idx) => !!userState.completedIssues[`${item.id}::${idx}`]).length;
-        const ultraUrl = `https://www.dcuniverseinfinite.com/search?q=${encodeURIComponent(item.ultraSearch)}`;
+        const isDc = activeTrackId === 'dc';
+        const ultraUrl = isDc
+          ? `https://www.dcuniverseinfinite.com/search?q=${encodeURIComponent(item.ultraSearch)}`
+          : 'https://www.marvelcomicsapp.com/';
+        const linkLabel = isDc ? 'Open on DC Ultra' : 'Open in the Marvel app';
+        const linkClass = isDc
+          ? 'no-print inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-dcBlue/15 hover:bg-dcBlue/25 text-sky-400 border border-dcBlue/30 text-xs font-semibold transition shrink-0 self-start'
+          : 'no-print inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-rose-200 border text-xs font-semibold transition shrink-0 self-start';
+        const linkStyle = isDc ? '' : 'background:rgba(236,29,36,0.15);border-color:rgba(236,29,36,0.45);';
+        const orderClass = isDc
+          ? 'inline-flex items-center justify-center px-2.5 py-1 rounded-lg text-xs font-extrabold bg-dcBlue text-white shadow-sm'
+          : 'inline-flex items-center justify-center px-2.5 py-1 rounded-lg text-xs font-extrabold text-white shadow-sm';
+        const orderStyle = isDc ? '' : 'background:#EC1D24';
+        const recapClass = isDc
+          ? 'print-bg-light rounded-xl bg-slate-950/90 border-l-4 border-dcBlue p-4'
+          : 'print-bg-light rounded-xl bg-slate-950/90 border-l-4 p-4';
+        const recapStyle = isDc ? '' : 'border-color:#EC1D24';
+        const recapLabelClass = isDc
+          ? 'text-xs font-extrabold uppercase tracking-wider text-dcBlue'
+          : 'text-xs font-extrabold uppercase tracking-wider';
+        const recapLabelStyle = isDc ? '' : 'color:#EC1D24';
 
         const formatBadgeClass = item.format === 'TPB'
           ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
           : 'bg-amber-500/15 text-amber-300 border-amber-500/30';
 
-        const formatBadgeText = item.format === 'TPB'
-          ? '📚 TPB on Ultra'
-          : '⚡ Single Issues on Ultra (30-Day Window)';
+        const formatBadgeText = !isDc
+          ? '⚡ Single issues'
+          : (item.format === 'TPB'
+            ? '📚 TPB on Ultra'
+            : '⚡ Single Issues on Ultra (30-Day Window)');
+        const readLabel = isDc
+          ? (isVolRead ? 'Volume Completed ✓' : 'Mark Volume Read')
+          : (isVolRead ? 'Story completed ✓' : 'Mark story read');
 
         return `
           <article class="print-card rounded-2xl border transition-all duration-200 ${isVolRead ? 'bg-slate-900/50 border-emerald-500/40' : 'bg-[#111827] border-slate-800 hover:border-slate-700'} shadow-lg overflow-hidden">
@@ -1220,7 +1989,7 @@
             <!-- TOP BAR: Chronological Order #, Era Badge, Format Badge & Mark Volume Read -->
             <div class="px-4 sm:px-6 py-3.5 bg-slate-950/60 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-lg text-xs font-extrabold bg-dcBlue text-white shadow-sm">
+                <span class="${orderClass}" ${orderStyle ? `style="${orderStyle}"` : ''}>
                   #${item.order}
                 </span>
                 <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-slate-200 border border-slate-700">
@@ -1240,16 +2009,16 @@
                   class="w-4 h-4 rounded accent-emerald-500 cursor-pointer"
                 />
                 <span class="text-xs font-bold uppercase tracking-wide">
-                  ${isVolRead ? 'Volume Completed ✓' : 'Mark Volume Read'}
+                  ${readLabel}
                 </span>
               </label>
             </div>
 
             <div class="p-4 sm:p-6 space-y-5">
               <!-- STEP 1 (MANDATORY USER ORDER): "WHAT YOU NEED TO KNOW" SUMMARY BEFORE COVER & ISSUES -->
-              <div class="print-bg-light rounded-xl bg-slate-950/90 border-l-4 border-dcBlue p-4">
+              <div class="${recapClass}" ${recapStyle ? `style="${recapStyle}"` : ''}>
                 <div class="flex items-center gap-2 mb-1.5">
-                  <span class="text-xs font-extrabold uppercase tracking-wider text-dcBlue">
+                  <span class="${recapLabelClass}" ${recapLabelStyle ? `style="${recapLabelStyle}"` : ''}>
                     📖 What You Need to Know Before Reading
                   </span>
                 </div>
@@ -1280,9 +2049,10 @@
                       href="${ultraUrl}"
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="no-print inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-dcBlue/15 hover:bg-dcBlue/25 text-sky-400 border border-dcBlue/30 text-xs font-semibold transition shrink-0 self-start"
+                      class="${linkClass}"
+                      ${linkStyle ? `style="${linkStyle}"` : ''}
                     >
-                      <span>Open on DC Ultra</span>
+                      <span>${linkLabel}</span>
                       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                     </a>
                   </div>
@@ -1332,16 +2102,16 @@
         renderList();
       });
 
-      // Era buttons
-      document.querySelectorAll('.era-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          activeFilters.era = btn.dataset.era;
-          document.querySelectorAll('.era-btn').forEach(b => {
-            b.className = 'era-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap transition';
-          });
-          btn.className = 'era-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-white text-slate-950 whitespace-nowrap transition shadow-sm';
-          renderList();
+      // Era buttons. Delegation survives the pills being rebuilt for each track.
+      document.getElementById('eraPillsContainer').addEventListener('click', (e) => {
+        const btn = e.target.closest('.era-btn');
+        if (!btn) return;
+        activeFilters.era = btn.dataset.era;
+        document.querySelectorAll('.era-btn').forEach(b => {
+          b.className = 'era-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap transition';
         });
+        btn.className = 'era-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-white text-slate-950 whitespace-nowrap transition shadow-sm';
+        renderList();
       });
 
       // Format buttons
@@ -1395,15 +2165,165 @@
     }
 
     // =========================================================================
+    // TRACK CHROME — DC copy is restored exactly when that track is selected
+    // =========================================================================
+    const DC_ERA_HTML = document.getElementById('eraPillsContainer').innerHTML;
+    const DC_BRAND_HTML = document.getElementById('brandLockup').innerHTML;
+    const DC_SEARCH_PLACEHOLDER = document.getElementById('searchInput').placeholder;
+    const DC_FOOTER_2_HTML = document.getElementById('footerLine2').innerHTML;
+    const DC_TITLE_TEXT = document.getElementById('pageTitle').textContent.trim();
+    const DC_SUB_TEXT = document.getElementById('pageSubtitle').textContent.trim();
+    const DC_FOOTER_1_TEXT = document.getElementById('footerLine1').textContent.trim();
+    const DC_EMPTY_TITLE = document.getElementById('emptyTitle').textContent;
+    const DC_EMPTY_COPY = document.getElementById('emptyCopy').textContent;
+
+    function renderEraPills() {
+      const container = document.getElementById('eraPillsContainer');
+      if (activeTrackId === 'dc') {
+        container.innerHTML = DC_ERA_HTML;
+        return;
+      }
+      const data = activeData();
+      const eras = [];
+      data.forEach(item => {
+        if (!eras.includes(item.era)) eras.push(item.era);
+      });
+      const idle = 'era-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap transition';
+      const active = 'era-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-white text-slate-950 whitespace-nowrap transition shadow-sm';
+      const buttons = [`<button type="button" data-era="all" class="${active}">All stories (${data.length})</button>`];
+      eras.forEach(era => {
+        const count = data.filter(item => item.era === era).length;
+        buttons.push(`<button type="button" data-era="${era}" class="${idle}">${era} (${count})</button>`);
+      });
+      container.innerHTML = buttons.join('');
+    }
+
+    function paintTrackButtons() {
+      document.querySelectorAll('.track-btn').forEach(btn => {
+        const on = btn.dataset.track === activeTrackId;
+        btn.setAttribute('aria-selected', on ? 'true' : 'false');
+        if (!on) {
+          btn.className = 'track-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700 hover:text-white whitespace-nowrap transition';
+          btn.style.background = '';
+          btn.style.color = '';
+          return;
+        }
+        if (activeTrackId === 'dc') {
+          btn.className = 'track-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-dcBlue text-white whitespace-nowrap transition';
+          btn.style.background = '';
+          btn.style.color = '';
+        } else {
+          btn.className = 'track-btn px-3 py-1.5 rounded-lg text-xs font-bold text-white whitespace-nowrap transition';
+          btn.style.background = '#EC1D24';
+          btn.style.color = '#ffffff';
+        }
+      });
+    }
+
+    function applyTrackChrome() {
+      const isDc = activeTrackId === 'dc';
+      document.body.dataset.track = activeTrackId;
+      paintTrackButtons();
+      document.getElementById('formatFilter').classList.toggle('hidden', !isDc);
+      document.getElementById('volumesWord').textContent = isDc ? 'Volumes' : 'Stories';
+      const bar = document.getElementById('progressBarFill');
+      bar.style.backgroundImage = isDc ? '' : 'linear-gradient(to right, #EC1D24, #fb7185, #fbbf24)';
+      document.getElementById('progressPercent').style.color = isDc ? '' : '#EC1D24';
+      const hint = document.getElementById('trackHint');
+
+      if (isDc) {
+        document.title = 'DC All In & Absolute Era: Completionist Ultra Reading Tracker (2025–2026)';
+        document.getElementById('brandLockup').innerHTML = DC_BRAND_HTML;
+        document.getElementById('pageTitle').textContent = DC_TITLE_TEXT;
+        document.getElementById('pageSubtitle').textContent = DC_SUB_TEXT;
+        document.getElementById('searchInput').placeholder = DC_SEARCH_PLACEHOLDER;
+        document.getElementById('footerLine1').textContent = DC_FOOTER_1_TEXT;
+        document.getElementById('footerLine2').innerHTML = DC_FOOTER_2_HTML;
+        document.getElementById('emptyEmoji').textContent = '🦇';
+        document.getElementById('emptyTitle').textContent = DC_EMPTY_TITLE;
+        document.getElementById('emptyCopy').textContent = DC_EMPTY_COPY;
+        hint.classList.add('hidden');
+        hint.textContent = '';
+      } else if (activeTrackId === 'marvel1990') {
+        document.title = 'Marvel reading tracker: 1990';
+        document.getElementById('brandLockup').innerHTML = '<span class="inline-flex items-center justify-center px-2.5 py-0.5 rounded-md text-xs font-extrabold tracking-wider uppercase text-white" style="background:#EC1D24;">MARVEL</span><span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold tracking-wider uppercase bg-rose-500/20 text-rose-300 border border-rose-500/30">1990</span>';
+        document.getElementById('pageTitle').textContent = 'Marvel reading tracker: 1990';
+        document.getElementById('pageSubtitle').textContent = 'Key story arcs from 1990, single issues only. The next year to add is 1991.';
+        document.getElementById('searchInput').placeholder = 'Search by title, character or issue number...';
+        document.getElementById('footerLine1').textContent = 'Marvel reading tracker · 1990. The next year to add is 1991.';
+        document.getElementById('footerLine2').textContent = 'This track is saved separately in this browser. Backup JSON covers all three tracks. Each story link opens the Marvel Comics app home page, because a search address could not be confirmed.';
+        document.getElementById('emptyEmoji').textContent = '📖';
+        document.getElementById('emptyTitle').textContent = 'No matching stories found';
+        document.getElementById('emptyCopy').textContent = 'Try clearing your search or choosing another era.';
+        hint.classList.remove('hidden');
+        hint.textContent = 'A starter list of the main 1990 arcs, not every issue from that year. Story links open marvelcomicsapp.com.';
+      } else {
+        document.title = 'Marvel reading tracker: 2025 onwards';
+        document.getElementById('brandLockup').innerHTML = '<span class="inline-flex items-center justify-center px-2.5 py-0.5 rounded-md text-xs font-extrabold tracking-wider uppercase text-white" style="background:#EC1D24;">MARVEL</span><span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold tracking-wider uppercase bg-rose-500/20 text-rose-300 border border-rose-500/30">2025 ONWARDS</span>';
+        document.getElementById('pageTitle').textContent = 'Marvel reading tracker: 2025 onwards';
+        document.getElementById('pageSubtitle').textContent = 'A checked starter list from 2025 onwards, single issues only. More will be added once each arc is confirmed.';
+        document.getElementById('searchInput').placeholder = 'Search by title, character or issue number...';
+        document.getElementById('footerLine1').textContent = 'Marvel reading tracker · 2025 onwards. A starter list, not the full line.';
+        document.getElementById('footerLine2').textContent = 'This track is saved separately in this browser. Backup JSON covers all three tracks. Each story link opens the Marvel Comics app home page, because a search address could not be confirmed.';
+        document.getElementById('emptyEmoji').textContent = '📖';
+        document.getElementById('emptyTitle').textContent = 'No matching stories found';
+        document.getElementById('emptyCopy').textContent = 'Try clearing your search or choosing another era.';
+        hint.classList.remove('hidden');
+        hint.textContent = 'A checked starter list, not every Marvel series from 2025. Story links open marvelcomicsapp.com.';
+      }
+      renderEraPills();
+    }
+
+    function setTrack(trackId, remember) {
+      if (!TRACK_KEYS[trackId]) return;
+      activeTrackId = trackId;
+      userState = trackStates[trackId];
+      activeFilters = { era: 'all', format: 'all', status: 'all', search: '' };
+      document.getElementById('searchInput').value = '';
+      applyTrackChrome();
+      document.querySelectorAll('.format-btn').forEach((b, i) => {
+        b.className = i === 0
+          ? 'format-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-dcBlue text-white whitespace-nowrap transition'
+          : 'format-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white whitespace-nowrap transition';
+      });
+      document.querySelectorAll('.status-btn').forEach((b, i) => {
+        b.className = i === 0
+          ? 'status-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-white whitespace-nowrap transition'
+          : 'status-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white whitespace-nowrap transition';
+      });
+      updateDashboardMetrics();
+      renderList();
+      if (remember !== false) {
+        try { localStorage.setItem(ACTIVE_TRACK_KEY, trackId); } catch (e) { /* private mode */ }
+      }
+    }
+
+    // =========================================================================
     // JSON BACKUP & RESTORE
     // =========================================================================
+    function copyProgress(progress) {
+      const source = progress || {};
+      return {
+        completedVolumes: { ...(source.completedVolumes || {}) },
+        completedIssues: { ...(source.completedIssues || {}) }
+      };
+    }
+
     function exportProgress() {
-      const dataStr = JSON.stringify(userState, null, 2);
-      const blob = new Blob([dataStr], { type: 'application/json' });
+      const payload = {
+        version: 2,
+        exported: new Date().toISOString(),
+        tracks: {
+          [STORAGE_KEY]: trackStates.dc,
+          [MARVEL_1990_KEY]: trackStates.marvel1990,
+          [MARVEL_2025_KEY]: trackStates.marvel2025
+        }
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `dc-ultra-reading-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      a.download = `reading-tracker-backup-${new Date().toISOString().slice(0, 10)}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -1422,12 +2342,27 @@
       reader.onload = (event) => {
         try {
           const imported = JSON.parse(event.target.result);
-          if (imported && typeof imported === 'object') {
-            userState.completedVolumes = imported.completedVolumes || {};
-            userState.completedIssues = imported.completedIssues || {};
-            saveState(false);
+          if (imported && imported.version === 2 && imported.tracks && typeof imported.tracks === 'object') {
+            Object.keys(TRACK_KEYS).forEach(trackId => {
+              const key = TRACK_KEYS[trackId];
+              if (imported.tracks[key]) {
+                trackStates[trackId] = copyProgress(imported.tracks[key]);
+                writeTrack(trackId);
+              }
+            });
+            userState = trackStates[activeTrackId];
+            updateDashboardMetrics();
             renderList();
-            showToast("Progress restored from backup!");
+            showToast("Progress restored for all three tracks.");
+          } else if (imported && typeof imported === 'object' && (imported.completedVolumes || imported.completedIssues)) {
+            trackStates.dc = copyProgress(imported);
+            writeTrack('dc');
+            if (activeTrackId === 'dc') userState = trackStates.dc;
+            updateDashboardMetrics();
+            renderList();
+            showToast("DC progress restored from an older backup. Marvel tracks were left as they are.");
+          } else {
+            showToast("Invalid JSON backup file.");
           }
         } catch (err) {
           showToast("Invalid JSON backup file.");
@@ -1437,14 +2372,21 @@
       e.target.value = '';
     });
 
+    document.getElementById('trackSwitch').addEventListener('click', (e) => {
+      const btn = e.target.closest('.track-btn');
+      if (!btn) return;
+      setTrack(btn.dataset.track, true);
+    });
+
     // =========================================================================
     // INITIALIZE APP
     // =========================================================================
     window.addEventListener('DOMContentLoaded', () => {
       loadState();
       setupFilterListeners();
-      updateDashboardMetrics();
-      renderList();
+      const savedTrack = localStorage.getItem(ACTIVE_TRACK_KEY);
+      const initial = (savedTrack === 'marvel1990' || savedTrack === 'marvel2025') ? savedTrack : 'dc';
+      setTrack(initial, false);
     });
   </script>
 </body>
