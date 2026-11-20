@@ -187,6 +187,178 @@
       text-align: center;
       padding: 1.25rem;
     }
+    /* DC trade cover on the big volume card. Fixed size matches the drawn card (128×192, 144×216 from sm). */
+    .volume-cover-shell {
+      width: 128px;
+      height: 192px;
+      flex-shrink: 0;
+    }
+    @media (min-width: 640px) {
+      .volume-cover-shell {
+        width: 144px;
+        height: 216px;
+      }
+    }
+    button.volume-cover {
+      position: relative;
+      display: block;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      border: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0c1220;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: zoom-in;
+    }
+    button.volume-cover:focus-visible {
+      outline: 2px solid #38bdf8;
+      outline-offset: 3px;
+    }
+    button.volume-cover img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .volume-cover-chrome {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      pointer-events: none;
+      border-radius: inherit;
+    }
+    .volume-cover-top {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      padding: 6px 40px 0 6px;
+    }
+    .volume-cover-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      max-width: 100%;
+    }
+    .volume-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 100%;
+      background: rgba(7, 10, 18, 0.88);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      border-radius: 999px;
+      padding: 3px 6px;
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      line-height: 1.15;
+      text-transform: uppercase;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+    }
+    .volume-pill-dc,
+    .volume-pill-order {
+      font-family: Oswald, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      line-height: 1;
+      min-height: 18px;
+      text-transform: none;
+    }
+    .volume-pill-dc {
+      padding: 2px 5px;
+    }
+    .volume-pill-order {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      padding: 3px 6px;
+      background: rgba(7, 10, 18, 0.94);
+      border-color: rgba(255, 255, 255, 0.62);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    }
+    .volume-cover-foot {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 3px;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 22px 7px 7px;
+      overflow: hidden;
+      background: linear-gradient(to top, rgba(7, 10, 18, 0.94) 0%, rgba(7, 10, 18, 0.84) 55%, rgba(7, 10, 18, 0.28) 82%, transparent 100%);
+    }
+    .volume-cover-issue1 {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.92);
+      background: rgba(7, 10, 18, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      padding: 2px 6px;
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      line-height: 1.2;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
+    }
+    .volume-cover-titles {
+      display: block;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    .volume-cover-title {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      font-family: Oswald, sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+    }
+    .volume-cover-sub {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-top: 1px;
+      font-size: 9px;
+      font-weight: 600;
+      line-height: 1.2;
+      color: rgba(255, 255, 255, 0.9);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+    }
+    .volume-cover-count {
+      align-self: flex-end;
+      color: #fff;
+      background: rgba(7, 10, 18, 0.62);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+      padding: 2px 5px;
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      line-height: 1.2;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.7);
+    }
   </style>
 </head>
 <body class="min-h-screen antialiased selection:bg-dcBlue selection:text-white">
@@ -377,7 +549,7 @@
 
   </main>
 
-  <!-- Cover lightbox. Opened from an issue thumbnail; it does not change a tick. -->
+  <!-- Cover lightbox. Opened from an issue thumbnail or a DC volume cover; it does not change a tick. -->
   <div id="coverLightbox" class="no-print" role="dialog" aria-modal="true" aria-labelledby="coverLightboxCaption" aria-hidden="true">
     <div class="cover-lightbox-backdrop" data-cover-dismiss></div>
     <div class="relative z-10 flex flex-col items-center">
@@ -1766,6 +1938,250 @@
     const COVERS = {"base":"https://comicvine.gamespot.com/a/uploads/scale_avatar/","note":"thumb = base + value (104x160). For a bigger image swap scale_avatar for scale_medium.","tracks":{"dc":{"vol-01::0":"11/110017/9496465-wwww.jpg","vol-01::1":"11/110017/9496498-wwww.jpg","vol-01::2":"11/110017/9496466-wwww.jpg","vol-01::3":"11/110017/9509336-wwww.jpg","vol-01::4":"11/110017/9516463-wwww.jpg","vol-02::0":"11/110017/9546480-wwww.jpg","vol-02::1":"11/110017/9576351-wwww.jpg","vol-02::2":"11/110017/9604536-wwww.jpg","vol-02::3":"11/110017/9641489-wwww.jpg","vol-02::4":"11/110017/9668413-wwww.jpg","vol-03::0":"11/110017/9503379-wwww.jpg","vol-03::1":"11/110017/9534177-wwww.jpg","vol-03::2":"11/110017/9569010-wwww.jpg","vol-03::3":"11/110017/9590753-wwww.jpg","vol-03::4":"11/110017/9627063-wwww.jpg","vol-03::5":"11161/111615891/9663675-cover.jpg","vol-04::0":"11/110017/9516337-wwww.jpg","vol-04::1":"11/110017/9546452-wwww.jpg","vol-04::2":"11/110017/9576337-wwww.jpg","vol-04::3":"11/110017/9604481-wwww.jpg","vol-04::4":"11/110017/9641474-wwww.jpg","vol-04::5":"11/110017/9668385-wwww.jpg","vol-05::0":"11/110017/9528006-wwww.jpg","vol-05::1":"11/110017/9552733-wwww.jpg","vol-05::2":"11/110017/9584940-wwww.jpg","vol-05::3":"11/110017/9619516-wwww.jpg","vol-05::4":"11/110017/9655349-wwww.jpg","vol-05::5":"11/110017/9678026-wwww.jpg","vol-06::0":"11/110017/9516424-wwww.jpg","vol-06::1":"11/110017/9546470-wwww.jpg","vol-06::2":"11/110017/9576348-wwww.jpg","vol-06::3":"11/110017/9604527-wwww.jpg","vol-06::4":"11/110017/9641477-wwww.jpg","vol-06::5":"11161/111615891/9663749-cover.jpg","vol-06::6":"11/110017/9693780-wwww.jpg","vol-07::0":"11/110017/9503381-wwww.jpg","vol-07::1":"11/110017/9534183-wwww.jpg","vol-07::2":"11/110017/9561120-wwww.jpg","vol-07::3":"11/110017/9590759-wwww.jpg","vol-07::4":"11/110017/9627066-wwww.jpg","vol-07::5":"11/110017/9655356-wwww.jpg","vol-08::0":"11/110017/9516452-wwww.jpg","vol-08::1":"11/110017/9546483-wwww.jpg","vol-08::2":"11/110017/9569036-wwww.jpg","vol-08::3":"11/110017/9599495-wwww.jpg","vol-08::4":"11/110017/9634717-wwww.jpg","vol-08::5":"11161/111615891/9663836-cover.jpg","vol-09::0":"11/110017/9509310-wwww.jpg","vol-09::1":"11/110017/9539896-wwww.jpg","vol-09::2":"11/110017/9569020-wwww.jpg","vol-09::3":"11/110017/9604523-wwww.jpg","vol-09::4":"11/110017/9634708-wwww.jpg","vol-09::5":"11161/111615891/9663703-cover.jpg","vol-10::0":"11/110017/9528009-wwww.jpg","vol-10::1":"11/110017/9552737-wwww.jpg","vol-10::2":"11/110017/9584941-wwww.jpg","vol-10::3":"11/110017/9619517-wwww.jpg","vol-10::4":"11/110017/9648342-wwww.jpg","vol-10::5":"11/110017/9678027-wwww.jpg","vol-11::0":"11/110017/9516463-wwww.jpg","vol-11::1":"11/110017/9546489-wwww.jpg","vol-11::2":"11/110017/9576355-wwww.jpg","vol-11::3":"11/110017/9604541-wwww.jpg","vol-11::4":"11/110017/9641494-wwww.jpg","vol-11::5":"11/110017/9561135-wwww.jpg","vol-12::0":"11/110017/9503380-wwww.jpg","vol-12::1":"11/110017/9509303-wwww.jpg","vol-12::2":"11/110017/9149581-wwww.jpg","vol-13::0":"11/110017/9509336-wwww.jpg","vol-13::1":"11/110017/9539908-wwww.jpg","vol-13::2":"11/110017/9569042-wwww.jpg","vol-13::3":"11/110017/9604545-wwww.jpg","vol-13::4":"11/110017/9634722-wwww.jpg","vol-13::5":"11/110017/9668420-wwww.jpg","vol-14::0":"11/110017/9516427-wwww.jpg","vol-14::1":"11/110017/9546474-wwww.jpg","vol-14::2":"11161/111615891/9577474-cover.jpg","vol-14::3":"11/110017/9604530-wwww.jpg","vol-14::4":"11/110017/9641478-wwww.jpg","vol-14::5":"11/110017/9668406-wwww.jpg","vol-15::0":"11/110017/9509326-wwww.jpg","vol-15::1":"11/110017/9534194-wwww.jpg","vol-15::2":"11/110017/9561131-wwww.jpg","vol-15::3":"11/110017/9503386-wwww.jpg","vol-15::4":"11/110017/9599486-wwww.jpg","vol-16::0":"11/110017/9627070-wwww.jpg","vol-16::1":"11/110017/9655365-wwww.jpg","vol-16::2":"11/110017/9686333-wwww.jpg","vol-16::3":"11/110017/9720726-wwww.jpg","vol-16::4":"11/110017/9750583-wwww.jpg","vol-17::0":"11/110017/9569034-wwww.jpg","vol-17::1":"11/110017/9599493-wwww.jpg","vol-17::2":"11/110017/9634716-wwww.jpg","vol-17::3":"11161/111615891/9663835-cover.jpg","vol-17::4":"11/110017/9693781-wwww.jpg","vol-17::5":"11/110017/9727399-wwww.jpg","vol-18::0":"11/110017/9528021-wwww.jpg","vol-18::1":"11/110017/9552748-wwww.jpg","vol-18::2":"11/110017/9584951-wwww.jpg","vol-18::3":"11/110017/9619525-wwww.jpg","vol-18::4":"11/110017/9648351-wwww.jpg","vol-18::5":"11/110017/9678032-wwww.jpg","vol-19::0":"11/110017/9509332-wwww.jpg","vol-19::1":"11/110017/9539905-wwww.jpg","vol-19::2":"11/110017/9569173-wwww.jpg","vol-19::3":"11/110017/9599497-wwww.jpg","vol-19::4":"11/110017/9634721-wwww.jpg","vol-19::5":"11161/111615891/9663894-cover.jpg","vol-20::0":"11/110017/9584954-wwww.jpg","vol-20::1":"11/110017/9619526-wwww.jpg","vol-20::2":"11/110017/9648352-wwww.jpg","vol-20::3":"11/110017/9678034-wwww.jpg","vol-20::4":"11/110017/9713766-wwww.jpg","vol-20::5":"11/110017/9742830-wwww.jpg","vol-21::0":"11/110017/9534192-wwww.jpg","vol-21::1":"11/110017/9561127-wwww.jpg","vol-21::2":"11/110017/9599478-wwww.jpg","vol-21::3":"11/110017/9627068-wwww.jpg","vol-21::4":"11/110017/9655360-wwww.jpg","vol-22::0":"11/110017/9576353-wwww.jpg","vol-22::1":"11/110017/9606440-wwww.jpg","vol-22::2":"11/110017/9641492-wwww.jpg","vol-22::3":"11/110017/9668414-wwww.jpg","vol-22::4":"11/110017/9701833-wwww.jpg","vol-22::5":"11/110017/9736792-wwww.jpg","vol-23::0":"11/110017/9539903-wwww.jpg","vol-23::1":"11/110017/9569040-wwww.jpg","vol-23::2":"11/110017/9599496-wwww.jpg","vol-23::3":"11/110017/9634719-wwww.jpg","vol-23::4":"11161/111615891/9663852-cover.jpg","vol-23::5":"11/110017/9707932-wwww.jpg","vol-24::0":"11/110017/9569025-wwww.jpg","vol-24::1":"11/110017/9599480-wwww.jpg","vol-24::2":"11/110017/9634709-wwww.jpg","vol-24::3":"11161/111615891/9663704-cover.jpg","vol-24::4":"11/110017/9693777-wwww.jpg","vol-25::0":"11161/111615891/9663676-cover.jpg","vol-25::1":"11/110017/9693772-wwww.jpg","vol-25::2":"11/110017/9727389-wwww.jpg","vol-25::3":"11/110017/9755713-wwww.jpg","vol-25::4":"11/110017/9791783-wwww.jpg","vol-25::5":"11/110017/9831342-wwww.jpg","vol-26::0":"11/110017/9668384-wwww.jpg","vol-26::1":"11/110017/9701813-wwww.jpg","vol-26::2":"11/110017/9736784-wwww.jpg","vol-26::3":"11/110017/9761181-wwww.jpg","vol-26::4":"11/110017/9797803-wwww.jpg","vol-26::5":"11161/111615891/9842936-cover.jpg","vol-27::0":"11/110017/9678018-wwww.jpg","vol-27::1":"11/110017/9713759-wwww.jpg","vol-27::2":"11/110017/9742824-wwww.jpg","vol-27::3":"11/110017/9775177-wwww.jpg","vol-27::4":"11/110017/9813367-wwww.jpg","vol-27::5":"11/110017/9849665-wwww.jpg","vol-28::0":"11/110017/9693774-wwww.jpg","vol-28::1":"11/110017/9701832-wwww.jpg","vol-28::2":"11/110017/9727391-wwww.jpg","vol-28::3":"11/110017/9736791-wwww.jpg","vol-28::4":"11/110017/9707925-wwww.jpg","vol-28::5":"11/110017/9761197-wwww.jpg","vol-29::0":"11/110017/9668419-wwww.jpg","vol-29::1":"11161/111615891/9702376-cover.jpg","vol-29::2":"11/110017/9736796-wwww.jpg","vol-29::3":"11/110017/9761206-wwww.jpg","vol-29::4":"11/110017/9613341-wwww.jpg","vol-30::0":"11/110017/9727402-wwww.jpg","vol-30::1":"11/110017/9755746-wwww.jpg","vol-30::2":"11/110017/9791796-wwww.jpg","vol-30::3":"11/110017/9831547-wwww.jpg","vol-30::4":"11/110017/9873448-wwww.jpg","vol-30::5":"11/110017/9892326-wwww.jpg","vol-31::0":"11/110017/9720729-wwww.jpg","vol-31::1":"11/110017/9751565-wwww.jpg","vol-31::2":"11/110017/9782032-wwww.jpg","vol-31::3":"11/110017/9822024-wwww.jpg","vol-31::4":"11/110017/9859738-wwww.jpg","vol-31::5":"11161/111615891/9887564-cover.jpg","vol-32::0":"11/110017/9849738-wwww.jpg","vol-32::1":"11161/111615891/9881600-cover.jpg","vol-32::2":"11/110017/9907400-wwww.jpg","vol-32::3":"11/110017/9927474-wwww.jpg","vol-32::4":"11/110017/9955793-wwww.jpg","vol-32::5":"11161/111615891/9978793-cover.jpg","vol-33::0":"11/110017/9561123-wwww.jpg","vol-33::1":"11/110017/9750574-wwww.jpg","vol-34::0":"11/110017/9613338-wwww.jpg","vol-34::1":"11/110017/9641484-wwww.jpg","vol-34::2":"11/110017/9668410-wwww.jpg","vol-34::3":"11/110017/9701828-wwww.jpg","vol-34::4":"11/110017/9736789-wwww.jpg","vol-34::5":"11/110017/9761195-wwww.jpg","vol-35::0":"11/110017/9797815-www.jpg","vol-35::1":"11/110017/9822022-wwww.jpg","vol-35::2":"11161/111615891/9842976-cover.jpg","vol-35::3":"11/110017/9859732-wwww.jpg","vol-35::4":"11/110017/9873433-wwww.jpg","vol-35::5":"11161/111615891/9887508-cover.jpg","vol-36::0":"11/110017/9701825-wwww.jpg","vol-36::1":"11/110017/9736787-wwww.jpg","vol-36::2":"11/110017/9761186-wwww.jpg","vol-36::3":"11/110017/9806658-wwww.jpg","vol-36::4":"11161/111615891/9842966-cover.jpg","vol-36::5":"11/110017/9873429-wwww.jpg","vol-37::0":"11/110017/9791798-wwww.jpg","vol-37::1":"11/110017/9831554-wwww.jpg","vol-37::2":"11/110017/9873451-wwww.jpg","vol-37::3":"11/110017/9892328-wwww.jpg","vol-37::4":"11/110017/9917721-wwww.jpg","vol-37::5":"11161/111615891/9939030-cover.jpg","vol-38::0":"11/110017/9713765-wwww.jpg","vol-38::1":"11/110017/9743673-wwww.jpg","vol-38::2":"11/110017/9775193-wwww.jpg","vol-38::3":"11/110017/9813408-wwww.jpg","vol-38::4":"11/110017/9849741-wwww.jpg","vol-38::5":"11161/111615891/9881646-cover.jpg","vol-39::0":"11/110017/9693788-wwww.jpg","vol-39::1":"11/110017/9727403-wwww.jpg","vol-39::2":"11/110017/9755748-wwww.jpg","vol-39::3":"11/110017/9791797-wwww.jpg","vol-39::4":"11/110017/9831553-wwww.jpg","vol-39::5":"11161/111615891/9869565-cover.jpg","vol-40::0":"11/110017/9648362-wwww.jpg","vol-40::1":"11/110017/9678038-wwww.jpg","vol-40::2":"11/110017/9713770-wwww.jpg","vol-40::3":"11/110017/9742835-wwww.jpg","vol-40::4":"11/110017/9775196-wwww.jpg","vol-40::5":"11/110017/9813420-wwww.jpg","vol-41::0":"11/110017/9686330-wwww.jpg","vol-41::1":"11/110017/9720725-wwww.jpg","vol-41::2":"11/110017/9750576-wwww.jpg","vol-41::3":"11/110017/9782028-wwww.jpg","vol-41::4":"11/110017/9822018-wwww.jpg","vol-41::5":"11/110017/9859731-wwww.jpg","vol-42::0":"11/110017/9813382-wwww.jpg","vol-42::1":"11/110017/9849739-wwww.jpg","vol-42::2":"11161/111615891/9881608-cover.jpg","vol-42::3":"11/110017/9907402-wwww.jpg","vol-42::4":"11/110017/9927477-wwww.jpg","vol-42::5":"11/110017/9955794-wwww.jpg","vol-43::0":"11/110017/9686308-wwww.jpg","vol-43::1":"11/110017/9720719-wwww.jpg","vol-43::2":"11/110017/9750569-wwww.jpg","vol-43::3":"11/110017/9791782-wwww.jpg","vol-43::4":"11/110017/9831339-wwww.jpg","vol-43::5":"11/110017/9859714-wwww.jpg","vol-43::6":"11161/111615891/9887431-cover.jpg","vol-44::0":"11/110017/9701815-wwww.jpg","vol-44::1":"11/110017/9736785-wwww.jpg","vol-44::2":"11/110017/9761182-wwww.jpg","vol-44::3":"11/110017/9797806-wwww.jpg","vol-44::4":"11161/111615891/9842937-cover.jpg","vol-44::5":"11/110017/9873425-wwww.jpg","vol-44::6":"11/110017/9897366-wwww.jpg","vol-45::0":"11/110017/9713760-wwww.jpg","vol-45::1":"11/110017/9743670-wwww.jpg","vol-45::2":"11/110017/9782019-wwww.jpg","vol-45::3":"11/110017/9813371-wwww.jpg","vol-45::4":"11/110017/9849666-wwww.jpg","vol-45::5":"11161/111615891/9881583-cover.jpg","vol-45::6":"11/110017/9907394-wwww.jpg","vol-46::0":"11161/111615891/9881573-cover.jpg","vol-47::0":"11/110017/9797816-www.jpg","vol-47::1":"11/110017/9806662-wwww.jpg","vol-47::2":"11161/111615891/9843015-cover.jpg","vol-47::3":"11/110017/9873445-wwww.jpg","vol-47::4":"11161/111615891/9881647-cover.jpg","vol-48::0":"11161/111615891/9887483-cover.jpg","vol-48::1":"11161/111615891/9922943-cover.jpg","vol-48::2":"11161/111615891/9961217-cover.jpg","vol-48::3":"11161/111615891/9985145-cover.jpg","vol-48::4":"11161/111615891/10004814-cover.jpg","vol-49::0":"11/110017/9897382-wwww.jpg","vol-49::1":"11161/111615891/9923001-cover.jpg","vol-49::2":"11/110017/9944535-wwww.jpg","vol-49::3":"11/110017/9972381-wwww.jpg","vol-49::4":"11161/111615891/9998122-cover.jpg","vol-50::0":"11/110017/9797819-www.jpg","vol-50::1":"11161/111615891/9843136-cover.jpg","vol-50::2":"11/110017/9873450-wwww.jpg","vol-50::3":"11/110017/9897384-wwww.jpg","vol-50::4":"11161/111615891/9923037-cover.jpg","vol-50::5":"11/110017/9944538-wwww.jpg","vol-50::6":"11/110017/9972380-wwww.jpg","vol-50::7":"11161/111615891/9998202-cover.jpg","vol-51::0":"11/110017/9944538-wwww.jpg","vol-51::1":"11161/111615891/9939022-cover.jpg","vol-51::2":"11/110017/9944526-wwww.jpg","vol-51::3":"11/110017/9932941-wwww.jpg","vol-51::4":"11/110017/9944523-wwww.jpg","vol-51::5":"11/110017/9932949-wwww.jpg","vol-52::0":"11/110017/9907404-wwww.jpg","vol-52::1":"11/110017/9927478-wwww.jpg","vol-52::2":"11/110017/9955795-wwww.jpg","vol-52::3":"11161/111615891/9978808-cover.jpg","vol-52::4":"11161/111615891/9967004-cover.jpg","vol-52::5":"11161/111615891/9972396-cover.jpg","vol-52::6":"11161/111615891/9978802-cover.jpg","vol-53::0":"11161/111615891/9922918-cover.jpg","vol-53::1":"11/110017/9932939-wwww.jpg","vol-53::2":"11161/111615891/9972346-cover.jpg","vol-53::3":"11161/111615891/9991547-cover.jpg","vol-53::4":"11/110017/10009078-wwww.jpg","vol-53::5":"11161/111615891/10041672-cover.jpg","vol-53::6":"11/110017/10067030-wwww.jpg","vol-54::0":"11161/111615891/10075187-cover.jpg","vol-54::1":"11/110017/10099331-wwww.jpg","vol-54::2":"11/110017/10125826-wwww.jpg","vol-54::3":"11161/111615891/10161955-cover.jpg","vol-55::0":"11161/111615891/10211231-cover.jpg","vol-55::1":"11161/111615891/10211228-cover.jpg","vol-55::2":"11161/111615891/10112501-cover.jpg","vol-55::3":"11/110017/10047890-wwww.jpg","vol-55::4":"11161/111615891/10016721-cover.jpg","vol-56::0":"11161/111615891/10023080-cover.jpg","vol-56::1":"11/110017/10047902-wwww.jpg","vol-56::2":"11161/111615891/10081170-cover.jpg","vol-56::3":"11161/111615891/10105542-cover.jpg","vol-56::4":"11161/111615891/10133413-cover.jpg","vol-57::0":"11161/111615891/10016661-cover.jpg","vol-57::1":"11161/111615891/10016706-cover.jpg","vol-57::2":"11161/111615891/10035579-cover.jpg","vol-57::3":"11/110017/10067034-wwww.jpg","vol-57::4":"11161/111615891/10176640-cover.jpg","vol-57::5":"11161/111615891/10176579-cover.jpg","vol-57::6":"11161/111615891/10176559-cover.jpg"},"marvel1990":{"m90-01::0":"11/117763/2877375-webofspider_man060.jpg","m90-01::1":"8/84205/4203568-1678208-amazing_spider_man__1963_1998_1st_series__328.jpg","m90-01::2":"11/117763/2877370-spectacularspider_man160.jpg","m90-01::3":"11/117763/2877379-webofspider_man061.jpg","m90-01::4":"11/117763/2877394-amazingspider_man329.jpg","m90-02::0":"0/4/29361-2045-32627-1-fantastic-four.jpg","m90-02::1":"0/4/29449-2045-32725-1-fantastic-four.jpg","m90-02::2":"0/4/29546-2045-32837-1-fantastic-four.jpg","m90-02::3":"0/4/29655-2045-32963-1-fantastic-four.jpg","m90-02::4":"0/4/29757-2045-33077-1-fantastic-four.jpg","m90-03::0":"8/84205/3687341-%24_57.jpg","m90-03::1":"8/84205/3687350-%24_57.jpg","m90-03::2":"0/4/29358-2128-32624-1-avengers-the.jpg","m90-03::3":"8/84205/3687362-%24_57.jpg","m90-03::4":"8/84205/3687365-%24_57.jpg","m90-04::0":"11/117763/2902548-spectacularspider_man161.jpg","m90-05::0":"11/117763/2902678-spectacularspider_man162.jpg","m90-05::1":"11/117763/2902679-spectacularspider_man163.jpg","m90-06::0":"11/117763/2898338-amazingspider_man330.jpg","m90-06::1":"11/117763/2898341-amazingspider_man331.jpg","m90-07::0":"5/56044/1596252-5315331530_83478a37cf_b.jpg","m90-07::1":"5/56044/1868174-uncanny_x_men__1963__258d.jpeg","m90-08::0":"5/56044/1672027-uncanny_x_men__1963__259.jpeg","m90-08::1":"5/56044/1656846-uncanny_x_men__1963__260.jpeg","m90-09::0":"5/56044/1636644-x_factor__1986_1st_series__50.jpeg","m90-10::0":"5/56044/1798891-new_mutants__1983_1st_series__086.jpeg","m90-10::1":"8/84205/4197182-nm87nm92m101.jpg","m90-10::2":"5/56044/1798894-new_mutants__1983_1st_series__088.jpeg","m90-10::3":"5/56044/1798895-new_mutants__1983_1st_series__089.jpeg","m90-11::0":"5/56044/2332778-wolverine__1988_1st_series__024.jpg","m90-12::0":"8/84205/4203669-1831932-amazing_spider_man__1963_1998_1st_series__332.jpg","m90-12::1":"11/117763/2898399-amazingspider_man333.jpg","m90-13::0":"0/4/50102-2870-65558-1-spectacular-spider-m.jpg","m90-13::1":"0/4/50103-2870-65559-1-spectacular-spider-m.jpg","m90-13::2":"0/4/50104-2870-65560-1-spectacular-spider-m.jpg","m90-13::3":"0/4/50105-2870-65561-1-spectacular-spider-m.jpg","m90-14::0":"0/4/29650-2128-32958-1-avengers-the.jpg","m90-14::1":"8/84205/3687395-%24_57.jpg","m90-14::2":"0/4/29803-2128-33132-1-avengers-the.jpg","m90-14::3":"8/84205/3687399-%24_57.jpg","m90-14::4":"0/4/29855-2128-33188-1-avengers-the.jpg","m90-14::5":"0/4/29961-2128-33308-1-avengers-the.jpg","m90-15::0":"0/4/30006-2128-33364-1-avengers-the.jpg","m90-16::0":"0/4/29673-2294-32981-1-thor.jpg","m90-16::1":"0/4/29778-2294-33098-1-thor.jpg","m90-16::2":"0/4/29807-2294-33136-1-thor.jpg","m90-16::3":"0/4/29879-2294-33212-1-thor.jpg","m90-16::4":"0/4/29910-2294-33255-1-thor.jpg","m90-16::5":"0/4/29986-2294-33333-1-thor.jpg","m90-16::6":"0/4/30010-2294-33368-1-thor.jpg","m90-17::0":"11/117763/2402428-captain_america__372___page_1.jpg","m90-17::1":"11/117763/2402430-captain_america__373___page_1.jpg","m90-17::2":"11/117763/2402443-captain_america__374___page_1.jpg","m90-17::3":"11/117763/2402442-captain_america__375___page_1.jpg","m90-17::4":"11/117763/2402454-captain_america__376___page_1.jpg","m90-17::5":"11/117763/2402453-captain_america__377___page_1.jpg","m90-17::6":"11/117763/2402456-captain_america__378___page_1.jpg","m90-18::0":"0/4/29658-2407-32966-1-iron-man.jpg","m90-18::1":"0/4/29760-2407-33080-1-iron-man.jpg","m90-18::2":"0/4/29863-2407-33196-1-iron-man.jpg","m90-18::3":"0/4/29970-2407-33317-1-iron-man.jpg","m90-18::4":"0/4/30067-2407-33428-1-iron-man.jpg","m90-18::5":"0/4/30160-2407-33534-1-iron-man.jpg","m90-19::0":"11/117763/3237733-amazing%20spider-man%20%23334%20-%20page%201.jpg","m90-19::1":"11/117763/3237740-amazing%20spider-man%20%23335%20-%20page%201.jpg","m90-19::2":"11/117763/3237741-amazing%20spider-man%20%23336%20-%20page%201.jpg","m90-19::3":"11/117763/3237748-amazing%20spider-man%20%23337%20-%20page%201.jpg","m90-19::4":"11/117763/3237753-amazing%20spider-man%20%23338%20-%20page%201.jpg","m90-19::5":"11/117763/3237758-amazing%20spider-man%20%23339%20-%20page%201.jpg","m90-20::0":"5/56044/1596256-5315331970_3a9c62fae0_b.jpg","m90-21::0":"0/4/29965-2045-33312-1-fantastic-four.jpg","m90-21::1":"0/4/30062-2045-33423-1-fantastic-four.jpg","m90-21::2":"0/4/30156-2045-33530-1-fantastic-four.jpg","m90-21::3":"0/4/30363-2045-33774-1-fantastic-four.jpg","m90-22::0":"5/56044/2423629-spider_man__1990__01a.jpeg","m90-22::1":"5/56044/2423635-spider_man__1990__02d.jpeg","m90-22::2":"5/56044/2423636-spider_man__1990__03d.jpeg","m90-22::3":"5/56044/2423637-spider_man__1990__04d.jpeg","m90-22::4":"5/56044/2423638-spider_man__1990__05d.jpeg","m90-23::0":"0/4/50106-2870-65562-1-spectacular-spider-m.jpg","m90-23::1":"0/4/50107-2870-65563-1-spectacular-spider-m.jpg","m90-23::2":"0/4/50108-2870-65564-1-spectacular-spider-m.jpg","m90-24::0":"0/4/49525-4250-64294-1-wolverine.jpg","m90-24::1":"0/4/49526-4250-64295-1-wolverine.jpg","m90-24::2":"0/4/49527-4250-64296-1-wolverine.jpg","m90-24::3":"0/4/49528-4250-64297-1-wolverine.jpg","m90-25::0":"0/4/50109-2870-65565-1-spectacular-spider-m.jpg","m90-26::0":"5/56044/1694928-amazing_spider_man__1963_1998_1st_series__340.jpeg","m90-26::1":"5/56044/1683075-amazing_spider_man__1963_1998_1st_series__341.jpeg","m90-26::2":"5/56044/1868086-amazing_spider_man__1963_1998_1st_series__342d.jpeg","m90-26::3":"5/56044/1694930-amazing_spider_man__1963_1998_1st_series__343.jpeg","m90-27::0":"5/56044/1596918-uncanny_x_men__1963__269.jpeg","m90-28::0":"5/56044/1656850-uncanny_x_men__1963__270.jpeg","m90-28::1":"5/56044/1798903-new_mutants__1983_1st_series__095.jpeg","m90-28::2":"5/56044/1703505-x_factor__1986_1st_series__60.jpeg","m90-28::3":"5/56044/1598021-uncanny_x_men__1963__271.png","m90-28::4":"5/56044/1798906-new_mutants__1983_1st_series__096.jpeg","m90-28::5":"5/56044/1703506-x_factor__1986_1st_series__61.jpeg","m90-29::0":"0/4/30444-2045-33871-1-fantastic-four.jpg"},"marvel2025":{"m25-01::0":"11/110017/9627336-wwww.jpg","m25-01::1":"11161/111615891/9663841-cover.jpg","m25-01::2":"11/110017/9701878-wwww.jpg","m25-01::3":"11/110017/9722038-wwww.jpg","m25-01::4":"11161/111615891/9751571-cover.jpg","m25-01::5":"11161/111615891/9817509-cover.jpg","m25-01::6":"11/110017/9859761-wwww.jpg","m25-01::7":"11/110017/9892337-wwww.jpg","m25-01::8":"11/110017/9917733-wwww.jpg","m25-02::0":"11/110017/9535008-wwww.jpg","m25-02::1":"11/110017/9547081-wwww.jpg","m25-02::2":"11/110017/9561139-wwww.jpg","m25-02::3":"11161/111615891/9577448-cover.jpg","m25-02::4":"11/110017/9592172-wwww.jpg","m25-02::5":"11/110017/9606479-wwww.jpg","m25-02::6":"11/110017/9627307-wwww.jpg","m25-02::7":"11/110017/9634743-wwww.jpg","m25-02::8":"11/110017/9655370-wwww.jpg","m25-02::9":"11/110017/9670375-wwww.jpg","m25-03::0":"11161/111615891/9642090-cover.jpg","m25-03::1":"11/110017/9670387-wwww.jpg","m25-03::2":"11/110017/9708173-wwww.jpg","m25-03::3":"11/110017/9729848-wwww.jpg","m25-03::4":"11/110017/9764041-wwww.jpg","m25-04::0":"11/110017/9701860-wwww.jpg","m25-04::1":"11/110017/9736797-wwww.jpg","m25-04::2":"11/110017/9757087-wwww.jpg","m25-04::3":"11/110017/9774746-wwww.jpg","m25-05::0":"11/110017/9634749-wwww.jpg","m25-05::1":"11/110017/9670382-wwww.jpg","m25-05::2":"11/110017/9708171-wwww.jpg","m25-05::3":"11/110017/9729844-wwww.jpg","m25-05::4":"11/110017/9764039-wwww.jpg","m25-06::0":"11161/111615891/9635343-cover.jpg","m25-06::1":"11/110017/9670411-wwww.jpg","m25-06::2":"11/110017/9708189-wwww.jpg","m25-06::3":"11/110017/9722049-wwww.jpg","m25-06::4":"11/110017/9729871-wwww.jpg","m25-07::0":"11/110017/9648372-wwww.jpg","m25-07::1":"11/110017/9686347-wwww.jpg","m25-07::2":"11/110017/9722026-wwww.jpg","m25-07::3":"11/110017/9743677-wwww.jpg","m25-07::4":"11/110017/9785076-wwww.jpg","m25-08::0":"11/110017/9670384-wwww.jpg","m25-08::1":"11/110017/9708172-wwww.jpg","m25-08::2":"11/110017/9736801-wwww.jpg","m25-08::3":"11/110017/9757094-wwww.jpg","m25-08::4":"11/110017/9799297-wwww.jpg","m25-09::0":"11/110017/9655381-wwww.jpg","m25-09::1":"11/110017/9693799-wwww.jpg","m25-09::2":"11/110017/9729861-wwww.jpg","m25-09::3":"11/110017/9757105-wwww.jpg","m25-09::4":"11/110017/9799305-wwww.jpg","m25-10::0":"11/110017/9642113-wwww.jpg","m25-10::1":"11/110017/9670406-wwww.jpg","m25-10::2":"11/110017/9708185-wwww.jpg","m25-10::3":"11/110017/9722040-wwww.jpg","m25-10::4":"11/110017/9743698-wwww.jpg","m25-10::5":"11/110017/9785095-wwww.jpg","m25-10::6":"11161/111615891/9817530-cover.jpg","m25-10::7":"11/110017/9859764-wwww.jpg","m25-10::8":"11161/111615891/9881671-cover.jpg","m25-10::9":"11161/111615891/9913065-cover.jpg","m25-11::0":"11161/111615891/9751582-cover.jpg","m25-11::1":"11/110017/9799315-wwww.jpg","m25-11::2":"11161/111615891/9843083-cover.jpg","m25-11::3":"11161/111615891/9869542-cover.jpg","m25-11::4":"11/110017/9902681-wwww.jpg","m25-12::0":"11/110017/9693808-wwww.jpg","m25-12::1":"11/110017/9729870-wwww.jpg","m25-12::2":"11/110017/9764054-wwww.jpg","m25-12::3":"11/110017/9785098-wwww.jpg","m25-12::4":"11161/111615891/9817588-cover.jpg","m25-12::5":"11/110017/9859770-wwww.jpg","m25-13::0":"11/110017/9686339-wwww.jpg","m25-13::1":"11/110017/9701853-wwww.jpg","m25-13::2":"11161/111615891/9716087-cover.jpg","m25-13::3":"11/110017/9729840-wwww.jpg","m25-13::4":"11/110017/9743675-wwww.jpg","m25-14::0":"11/110017/9774764-wwww.jpg","m25-14::1":"11/110017/9825227-wwww.jpg","m25-14::2":"11161/111615891/9843162-cover.jpg","m25-14::3":"11/110017/9875500-wwww.jpg","m25-15::0":"11/110017/9648379-wwww.jpg","m25-15::1":"11/110017/9648415-wwww.jpg","m25-15::2":"11/110017/9648392-wwww.jpg","m25-15::3":"11/110017/9655398-wwww.jpg","m25-15::4":"11/110017/9655396-wwww.jpg","m25-15::5":"11161/111615891/9663905-cover.jpg","m25-15::6":"11161/111615891/9663769-cover.jpg","m25-15::7":"11/110017/9670422-wwww.jpg","m25-16::0":"11/110017/9736804-wwww.jpg","m25-16::1":"11161/111615891/9751521-cover.jpg","m25-16::2":"11/110017/9764045-wwww.jpg","m25-16::3":"11/110017/9791758-wwww.jpg","m25-16::4":"11/110017/9825211-wwww.jpg","m25-17::0":"11/110017/9774766-wwww.jpg","m25-18::0":"11/110017/9799328-wwww.jpg","m25-18::1":"11161/111615891/9881723-cover.jpg","m25-18::2":"11161/111615891/9887440-cover.jpg","m25-18::3":"11/110017/9907479-wwww.jpg","m25-18::4":"11/110017/9927487-wwww.jpg","m25-18::5":"11161/111615891/9950405-cover.jpg","m25-19::0":"11161/111615891/9887588-cover.jpg","m25-20::0":"11/110017/9955815-wwww.jpg","m25-20::1":"11161/111615891/9967126-cover.jpg","m25-20::2":"11161/111615891/9991719-cover.jpg","m25-21::0":"11/110017/9961088-wwww.jpg","m25-22::0":"11/110017/9955811-wwww.jpg","m25-23::0":"11161/111615891/9985144-cover.jpg","m25-23::1":"11161/111615891/10016656-cover.jpg","m25-23::2":"11161/111615891/10048062-cover.jpg","m25-23::3":"11161/111615891/10060498-cover.jpg","m25-23::4":"11161/111615891/10087496-cover.jpg"}}};
 
     // =========================================================================
+    // DC TRADE PAPERBACK COVERS (BIG VOLUME CARD)
+    // Public Comic Vine image links only. Never put an API key in this file.
+    // DC track only. Keyed by entry id (for example vol-03).
+    // The card uses base + path, with scale_avatar swapped for scale_small.
+    // The lightbox uses the same address with scale_medium.
+    // source "tpb" is the collected edition. source "issue1" is the first
+    // issue, used when Comic Vine has no trade yet (the card says so).
+    // =========================================================================
+    const TPB_COVERS = {
+      "base": "https://comicvine.gamespot.com/a/uploads/scale_avatar/",
+      "note": "Big box: base + path, swapping \"scale_avatar\" for \"scale_small\" (about 417x640, ~110 KB; sharp at 150x230 on retina) or \"scale_medium\" (about 620x960, ~180 KB). Keyed by entry id (READING_DATA[].id). source \"tpb\" = collected-edition cover; \"issue1\" = first issue cover used as fallback.",
+      "volumes": {
+        "vol-01": {
+          "path": "6/60408/9809764-allinsaga.jpg",
+          "source": "tpb"
+        },
+        "vol-02": {
+          "path": "6/60408/9861727-intotheinferno.jpg",
+          "source": "tpb"
+        },
+        "vol-03": {
+          "path": "14/149814/9882492-7593656483-ABSBM.jpg",
+          "source": "tpb"
+        },
+        "vol-04": {
+          "path": "11161/111615891/9918057-cover.jpg",
+          "source": "tpb"
+        },
+        "vol-05": {
+          "path": "11161/111615891/9918059-cover.jpg",
+          "source": "tpb"
+        },
+        "vol-06": {
+          "path": "6/60408/9845975-mercyfathercorrect.jpg",
+          "source": "tpb"
+        },
+        "vol-07": {
+          "path": "11161/111615891/10112502-cover.jpg",
+          "source": "tpb"
+        },
+        "vol-08": {
+          "path": "11/110017/9516452-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-09": {
+          "path": "6/60408/9839927-whoisselina.jpg",
+          "source": "tpb"
+        },
+        "vol-10": {
+          "path": "11192/111922970/9883227-2905614181-81-Hl.jpg",
+          "source": "tpb"
+        },
+        "vol-11": {
+          "path": "11161/111615891/9737230-cover.jpg",
+          "source": "tpb"
+        },
+        "vol-12": {
+          "path": "11161/111615891/9909494-cover.jpg",
+          "source": "tpb"
+        },
+        "vol-13": {
+          "path": "6/60408/9809409-wwfury.jpg",
+          "source": "tpb"
+        },
+        "vol-14": {
+          "path": "6/60408/9806496-flashasabove.jpg",
+          "source": "tpb"
+        },
+        "vol-15": {
+          "path": "6/60408/9858569-civilcorps.jpg",
+          "source": "tpb"
+        },
+        "vol-16": {
+          "path": "11/110017/9627070-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-17": {
+          "path": "11/110017/9569034-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-18": {
+          "path": "11/110017/9528021-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-19": {
+          "path": "11/110017/9509332-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-20": {
+          "path": "11/110017/9584954-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-21": {
+          "path": "11/110017/9534192-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-22": {
+          "path": "11161/111615891/9930265-cover.jpg",
+          "source": "tpb"
+        },
+        "vol-23": {
+          "path": "11161/111615891/9930422-cover.jpg",
+          "source": "tpb"
+        },
+        "vol-24": {
+          "path": "11161/111615891/9930255-cover.jpg",
+          "source": "tpb"
+        },
+        "vol-25": {
+          "path": "11161/111615891/9944809-cover.jpg",
+          "source": "tpb"
+        },
+        "vol-26": {
+          "path": "11161/111615891/9918061-cover.jpg",
+          "source": "tpb"
+        },
+        "vol-27": {
+          "path": "11161/111615891/9933438-cover.jpg",
+          "source": "tpb"
+        },
+        "vol-28": {
+          "path": "11161/111615891/9929414-cover.jpg",
+          "source": "tpb"
+        },
+        "vol-29": {
+          "path": "11/110017/9668419-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-30": {
+          "path": "11/110017/9727402-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-31": {
+          "path": "11/110017/9720729-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-32": {
+          "path": "11/110017/9849738-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-33": {
+          "path": "11156/111567728/10054699-714lvlcqwcl._sl1500_.jpg",
+          "source": "tpb"
+        },
+        "vol-34": {
+          "path": "11/110017/9613338-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-35": {
+          "path": "11/110017/9797815-www.jpg",
+          "source": "issue1"
+        },
+        "vol-36": {
+          "path": "11/110017/9701825-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-37": {
+          "path": "1/15776/10128545-ww_mice_men.jpg",
+          "source": "tpb"
+        },
+        "vol-38": {
+          "path": "11/110017/9713765-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-39": {
+          "path": "11/110017/9693788-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-40": {
+          "path": "11/110017/9648362-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-41": {
+          "path": "11/110017/9686330-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-42": {
+          "path": "11/110017/9813382-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-43": {
+          "path": "11161/111615891/9978770-cover.jpg",
+          "source": "tpb"
+        },
+        "vol-44": {
+          "path": "11161/111615891/9991548-cover.jpg",
+          "source": "tpb"
+        },
+        "vol-45": {
+          "path": "11161/111615891/10004790-cover.jpg",
+          "source": "tpb"
+        },
+        "vol-46": {
+          "path": "11161/111615891/9881573-cover.jpg",
+          "source": "issue1"
+        },
+        "vol-47": {
+          "path": "11/110017/9797816-www.jpg",
+          "source": "issue1"
+        },
+        "vol-48": {
+          "path": "11161/111615891/9887483-cover.jpg",
+          "source": "issue1"
+        },
+        "vol-49": {
+          "path": "11/110017/9897382-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-50": {
+          "path": "11/110017/9797819-www.jpg",
+          "source": "issue1"
+        },
+        "vol-51": {
+          "path": "11/110017/9944538-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-52": {
+          "path": "11/110017/9907404-wwww.jpg",
+          "source": "issue1"
+        },
+        "vol-53": {
+          "path": "11161/111615891/10181955-cover.jpg",
+          "source": "tpb"
+        },
+        "vol-54": {
+          "path": "11161/111615891/10075187-cover.jpg",
+          "source": "issue1"
+        },
+        "vol-55": {
+          "path": "11161/111615891/10211231-cover.jpg",
+          "source": "issue1"
+        },
+        "vol-56": {
+          "path": "11161/111615891/10023080-cover.jpg",
+          "source": "issue1"
+        },
+        "vol-57": {
+          "path": "11161/111615891/10016661-cover.jpg",
+          "source": "issue1"
+        }
+      }
+    };
+
+    // =========================================================================
     // STATE MANAGEMENT & LOCAL STORAGE
     // =========================================================================
     const STORAGE_KEY = 'dc_ultra_tracker_2025_2026_v1';
@@ -1994,8 +2410,7 @@
       `;
     }
 
-    function generateCoverHTML(item) {
-      if (activeTrackId !== 'dc') return generateMarvelCoverHTML(item);
+    function generateDrawnCoverHTML(item) {
       const { bg1, bg2, accent, badge, icon } = item.coverTheme;
       const isAbsolute = item.title.toLowerCase().includes('absolute');
       const issueCountLabel = item.issues.length === 1 ? '1 ISSUE' : `${item.issues.length} ISSUES`;
@@ -2041,6 +2456,67 @@
               <span class="px-1.5 py-0.5 rounded bg-black/50" style="color: ${accent};">${issueCountLabel}</span>
             </div>
           </div>
+        </div>
+      `;
+    }
+
+    function generateCoverHTML(item) {
+      if (activeTrackId !== 'dc') return generateMarvelCoverHTML(item);
+      const drawn = generateDrawnCoverHTML(item);
+      const record = (typeof TPB_COVERS !== 'undefined' && TPB_COVERS.volumes && TPB_COVERS.volumes[item.id]) || null;
+      if (!record || !record.path) return drawn;
+
+      const issue1 = record.source === 'issue1';
+      const small = (TPB_COVERS.base + record.path).replace('scale_avatar', 'scale_small');
+      const medium = (TPB_COVERS.base + record.path).replace('scale_avatar', 'scale_medium');
+      const alt = `${item.title} cover`;
+      const aria = issue1 ? `${alt}. Issue #1 cover` : alt;
+      const caption = issue1 ? `${item.title} · Issue #1 cover` : item.title;
+      const colon = item.title.indexOf(':');
+      const mainTitle = colon === -1 ? item.title : item.title.slice(0, colon).trim();
+      const subTitle = colon === -1 ? '' : item.title.slice(colon + 1).trim();
+      const issueCountLabel = item.issues.length === 1 ? '1 ISSUE' : `${item.issues.length} ISSUES`;
+      const { badge } = item.coverTheme;
+
+      return `
+        <div class="volume-cover-shell">
+          <template class="volume-cover-fallback">${drawn}</template>
+          <button
+            type="button"
+            class="volume-cover comic-cover-shadow"
+            data-medium="${escapeHtml(medium)}"
+            data-label="${escapeHtml(caption)}"
+            aria-label="${escapeHtml(aria)}"
+          >
+            <img
+              src="${escapeHtml(small)}"
+              alt="${escapeHtml(alt)}"
+              width="144"
+              height="216"
+              loading="lazy"
+              decoding="async"
+              referrerpolicy="no-referrer"
+              draggable="false"
+              onerror="volumeCoverFailed(this)"
+            />
+            <span class="volume-cover-chrome" aria-hidden="true">
+              <span class="volume-cover-top">
+                <span class="volume-cover-badges">
+                  <span class="volume-pill volume-pill-dc">DC</span>
+                  <span class="volume-pill">${escapeHtml(badge)}</span>
+                </span>
+                <span class="volume-pill volume-pill-order">#${item.order}</span>
+              </span>
+              <span class="volume-cover-foot">
+                ${issue1 ? '<span class="volume-cover-issue1">Issue #1 cover</span>' : ''}
+                <span class="volume-cover-titles">
+                  <span class="volume-cover-title">${escapeHtml(mainTitle)}</span>
+                  ${subTitle ? `<span class="volume-cover-sub">${escapeHtml(subTitle)}</span>` : ''}
+                </span>
+                <span class="volume-cover-count">${escapeHtml(issueCountLabel)}</span>
+              </span>
+            </span>
+          </button>
         </div>
       `;
     }
@@ -2532,9 +3008,10 @@
     });
 
     // =========================================================================
-    // ISSUE COVER THUMBNAILS & LIGHTBOX
-    // The thumbnail sits outside the tick label, so opening a cover does not
-    // toggle the checkbox.
+    // ISSUE COVER THUMBNAILS, DC VOLUME COVERS & LIGHTBOX
+    // Thumbnails sit outside the tick label. The big DC volume cover is a
+    // button of its own, not the "mark volume read" control. Opening either
+    // one does not change a tick.
     // =========================================================================
     function escapeHtml(value) {
       return String(value)
@@ -2579,6 +3056,15 @@
       button.dataset.failed = '1';
       button.classList.add('is-failed');
       button.setAttribute('aria-label', 'Cover not available');
+    }
+
+    function volumeCoverFailed(img) {
+      const shell = img && img.closest('.volume-cover-shell');
+      if (!shell || shell.dataset.fallen === '1') return;
+      shell.dataset.fallen = '1';
+      const tpl = shell.querySelector('template.volume-cover-fallback');
+      if (!tpl) return;
+      shell.outerHTML = tpl.innerHTML;
     }
 
     let coverLightboxReturn = null;
@@ -2642,7 +3128,7 @@
         if (event.key === 'Escape') closeCoverLightbox();
       });
       document.getElementById('readingListContainer').addEventListener('click', (event) => {
-        const button = event.target.closest('.issue-cover');
+        const button = event.target.closest('.issue-cover, .volume-cover');
         if (!button) return;
         event.preventDefault();
         event.stopPropagation();
